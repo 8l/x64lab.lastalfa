@@ -1,5 +1,5 @@
 
-- version 0.0.138 (released on 04.10.2012 ) " ... " 
+- version 0.0.138 (released on 04.10.2012 ) Pre-Beta 
   +GUI Update icon according extension, after saving blank file
   +REP edit/clean. root structure, repeated into the develop folder
 
