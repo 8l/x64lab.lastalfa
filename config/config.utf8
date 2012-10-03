@@ -2,10 +2,10 @@
 	;--- TOP format file for x64lab
 	;--- Copyright Marc Rainer Kranz 2009-2012
 
-	version:"0.0.134"
-	session:02h
+	version:"0.0.97"
+	session:00h
 	wspace:"%X64LAB%\project\welcome.x64lab"
 	language:"en-US"
-	owner:"Mr.Biberkopf"
 	fshow:03
+	owner:"Mr.Biberkopf"
 	pos:07300CB0320026Dh

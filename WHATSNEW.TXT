@@ -1,17 +1,12 @@
 
-- version 0.0.134 (released on 03.10.2012 ) " ... " 
+- version 0.0.135 (released on 03.10.2012 ) " ... " 
+  +REP compilation ok
+  +REP online repo ok
 
 - version 0.0.134 (released on 03.10.2012 ) " ... " 
-
-- version 0.0.142 (released on 03.10.2012 ) " ... " 
-
-- version 0.0.141 (released on 03.10.2012 ) " ... " 
-
-- version 0.0.140 (released on 03.10.2012 ) " ... " 
-
-- version 0.0.139 (released on 03.10.2012 ) " ... " 
-
-- version 0.0.138 (released on 03.10.2012 ) " ... " 
+  +REP cleaning repo and start again. old upto 133 is at
+       http://code.google.com/p/x64lab/source/checkout?repo=upto133
+  	   entering mantainance mode 24 hours.
 
 - version 0.0.133 (released on 02.10.2012 ) " ... " 
   +ALG corrected flaw by loading one language
@@ -110,7 +105,9 @@
     - FIL inserted or deleted files
     - GUI related modifications
     - MNU affeting menus
+    - REP affecting repository
     - RES resources
+
 
   +MNU "Developer tools"|"Browse to add new tool"
   +MNU "Developer tools"|"Remove tool"
