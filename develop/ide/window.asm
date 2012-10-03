@@ -525,6 +525,12 @@ lvw:
 	mov edx,LVM_GETITEMW
 	jmp	apiw.sms
 
+.set_item:
+	;--- in R9 TVITEM
+	;--- in RCX hLvw
+	mov edx,LVM_SETITEMW
+	jmp	apiw.sms
+
 .set_itext:
 	;--- in R9 TVITEM
 	;--- in R8 idx item
@@ -546,6 +552,17 @@ lvw:
 	mov edx,LVM_SETVIEW
 	jmp	apiw.sms
 
+.set_icon:
+	;--- in RDX iItem
+	;--- in R8 idx image
+	;--- in R9 TVITEM
+	mov [r9+LVITEMW.mask],\
+		LVIF_IMAGE
+	mov [r9+\
+		LVITEMW.iImage],r8d
+	mov [r9+\
+		LVITEMW.iItem],edx
+	jmp	.set_item
 
 .is_param:
 	;--- in RCX hLvw

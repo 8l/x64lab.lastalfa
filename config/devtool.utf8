@@ -1,15 +1,57 @@
+	;--- Warning!! utf8 no-BOM äöüß
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
 
-	.:"Assembly tools" (
+	.:"Assembly tools"(
 		.:"E:\olly\ollydbg.exe"
+		.:"E:\x32lab\tools\pmaBinary.exe"
+		.:"E:\temp\fdbg\fdbg.exe"
+		.:"E:\x32lab\tools\cCalc.exe"
+		.:"C:\Program Files (x86)\MicrosoftVS10\Common7\Tools\errlook.exe"
+		.:"C:\Program Files (x86)\Resource Kit\oleview.exe"
 	)
-
-	.:"General" (
+	.:"General"(
 		.:"%ProgramFiles(x86)%\HxD\HxD.exe"
 		.:"%ProgramFiles(x86)%\SmidgeonSoft\PEBrowsePro\PEBrowsePro.exe"
 		.:"%SystemRoot%\system32\mspaint.exe"
 		.:"%SystemRoot%\system32\calc.exe"
+		.:"E:\x32lab\tools\Pickard.exe"
+		.:"E:\x32lab\tools\resednew\ResEdit.exe"
+		.:"E:\x32lab\tools\rased\resed.exe"
 	)
-
-	.:"Help Files" (
+	.:"Link & startup"(
+		.:"E:\x64lab\develop\command_prompt.lnk"
+		.:"E:\x64lab\develop\command_prompt32.lnk"
+	)
+	.:"Help Files"(
 		.:"E:\x32lab\help\win32.hlp"
+		.:"E:\x32lab\help\win32KB.hlp"
+		.:"E:\x32lab\help\x86eas.hlp"
+		.:"E:\x32lab\help\Tabla Ascii.chm"
+		.:"E:\x32lab\help\2_[Charles Petzold] Programming Windows - Win32 API 5th Ed.chm"
+		.:"E:\x32lab\help\optimizing_assembly.pdf"
+		.:"E:\x32lab\help\artOAProgr.pdf"
+	)
+	.:"Intel"(
+		.:"E:\x32lab\help\opcode\64-ia-32-architectures-software-developer-manual-325462.pdf"
+		.:"E:\x32lab\help\opcode\AM-DEC09.pdf"
+		.:"E:\x32lab\help\opcode\AMD_21267.pdf"
+		.:"E:\x32lab\help\opcode\fxtbook.pdf"
+		.:"E:\x32lab\help\opcode\instruction_tables.pdf"
+		.:"E:\x32lab\help\opcode\intel_app_note.pdf"
+		.:"E:\x32lab\help\opcode\intel_basic1.pdf"
+		.:"E:\x32lab\help\opcode\intel_changes.pdf"
+		.:"E:\x32lab\help\opcode\intel_optimize.pdf"
+		.:"E:\x32lab\help\opcode\intel_progr_guide.pdf"
+		.:"E:\x32lab\help\opcode\intel_progr_guide_3b.pdf"
+		.:"E:\x32lab\help\opcode\intel_sse.pdf"
+		.:"E:\x32lab\help\opcode\intel_x2apic.pdf"
+		.:"E:\x32lab\help\opcode\microcode.pdf"
+		.:"E:\x32lab\help\opcode\NZ-DEC09.pdf"
+		.:"E:\x32lab\help\opcode\opcodes.chm"
+		.:"E:\x32lab\help\opcode\Opcodes.exe"
+		.:"E:\x32lab\help\opcode\OPMAP.TXT"
+		.:"E:\x32lab\help\opcode\OPMAP_A.TXT"
+		.:"E:\x32lab\help\opcode\population_count.pdf"
+		.:"E:\x32lab\help\opcode\WinCmdRef.chm"
 	)

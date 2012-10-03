@@ -1,7 +1,30 @@
 
+- version 0.0.138 (released on 04.10.2012 ) " ... " 
+  +GUI Update icon according extension, after saving blank file
+  +REP edit/clean. root structure, repeated into the develop folder
+
+     x64lab
+      | config
+      | develop
+      | ext
+      | lang
+      | | en-US
+      | | ..
+      | help
+      | | en-US
+      | | ..
+      | plugin
+      | | dock64
+      | | top64
+      | | bk64
+      | project
+      | tmp
+      | template
+     ...
+
 - version 0.0.137 (released on 03.10.2012 ) " ... " 
   +BEH Adding smartlink to empty treeitem container, ask for it 
-   setting as child/siblings
+       setting as child/siblings
 
 - version 0.0.135 (released on 03.10.2012 ) " ... " 
   +REP compilation ok

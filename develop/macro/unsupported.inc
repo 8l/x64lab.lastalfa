@@ -1,10 +1,8 @@
-	;This code is public domain.
-	;This code is not supported in the x64lab BSD license
+	;--- This code is public domain.-------------------------------------
 
 	;----------------------display_hex numbits,symbolic const------------
 	;	FROM BOARD flatassembler.net
-	;	VERSION 31 März 2008
-	;	AUTHOR:  manual, slightly modified
+	;	VERSION 31 MÃ¤rz 2008
 	;-----------
 	macro display_hex bits,symb_const
 		 {

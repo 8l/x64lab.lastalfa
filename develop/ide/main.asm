@@ -11,7 +11,6 @@
   ;| filename:
   ;ö-------------------------------------------------ä
 
-
 	display "- infos: ",13,10
 	define status 0
 	match =TRUE,DEBUG	{

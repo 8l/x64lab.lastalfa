@@ -502,10 +502,11 @@ wspace:
 	call lvw.is_param
 	test eax,eax
 	jz	.save_fileF	;--- internal error
-
 	mov r8,rdx
-	xor ecx,ecx
 	mov r9,rsp
+	xor ecx,ecx
+
+	push r8		;--- index item
 	lea rdx,[.io.buf]
 	mov [r9+\
 		LVITEMW.iSubItem],ecx
@@ -513,6 +514,21 @@ wspace:
 		LVITEMW.pszText],rdx
 	mov rcx,[hDocs]
 	call lvw.set_itext
+
+	;--- set icon for prev LF_BLANK
+	mov rcx,rbx
+	call .get_icon
+	mov [.labf.iIcon],eax
+	mov [.labf.hIcon],rdx
+
+	pop rdx		;--- index item
+	xor ecx,ecx
+	mov r9,rsp
+	mov r8,rax
+	mov [r9+\
+		LVITEMW.iSubItem],ecx
+	mov rcx,[hDocs]
+	call lvw.set_icon
 
 	;--- set new view for prev LF_BLANK
 	mov rcx,rbx
