@@ -1,0 +1,177 @@
+
+- version 0.0.134 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.134 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.142 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.141 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.140 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.139 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.138 (released on 03.10.2012 ) " ... " 
+
+- version 0.0.133 (released on 02.10.2012 ) " ... " 
+  +ALG corrected flaw by loading one language
+  +FIL [develop\equates\nls.inc]
+  +FIL [develop\ide\lang.asm]
+  +BEH After changing language ask to restart
+  +DIR [plugin\lang\en-US] english language dll is there now.
+       folder name follows the "Culture Name" (no neutral name allowed for Vista)
+       from the IETF language tag http://en.wikipedia.org/wiki/IETF_language_tag
+       http://www.microsoft.com/resources/msdn/goglobal/default.mspx
+  +GUI improved font spacing on menuitems
+
+- version 0.0.131 (released on 29.09.2012 ) Pre-Beta 
+  +FIL add [develop\ide\x64lab.svg] SVG logo
+  +BEH group undoS in a single operation on un/commenting
+
+- version 0.0.129 (released on 25.09.2012 ) Pre-Beta 
+  +MNU add Edit|Scintilla|Comment line/s using regexp
+  +MNU add Edit|Scintilla|Uncomment line/s  using regexp
+  +CFG [config\ext\*.utf8] "commend" param (see syntax_colouring.txt)
+  +CFG [config\ext\*.utf8] "commstart" param (see syntax_colouring.txt)
+  +CFG [config\ext\*.utf8] "commline" param (see syntax_colouring.txt)
+
+- version 0.0.127 (released on 17.09.2012 ) " ... " 
+  +BEH Apply colourizing to previous blank file
+  +FIL [config\ext\topfile.utf8] Class for TOP files
+  +FIL [config\ext\utf8.topfile] Extension file
+  +FIL [config\ext\top.topfile] Extension file
+  +MNU add Edit|Scintilla
+
+- version 0.0.126 (released on 12.09.2012 ) " ... " 
+  +API Adding	[dock64.load],[dock64.save]
+  +FIL [config\docking.bin] must be there, for now.
+  +GUI Save position of dock/float windows. test-phase.
+  
+- version 0.0.120 (released on 08.09.2012 ) " ... " 
+  +BEH Devtool: default run tool in tool's directory
+
+- version 0.0.119 (released on 07.09.2012 ) " ... " 
+  +GUI "Key Bindings" dialog
+  +FIL [help\en\key_bindings.txt]
+
+- version 0.0.118 (released on 27.08.2012 ) " ... " 
+  +GUI Properties windows renamed to "Multipurpose"
+  +MNU add Edit|Remove item from Workspace
+  +MNU add Edit|Reload Scintilla classes
+  +RES purge "sci()" node in class files [config\ext\*.utf8]
+
+- version 0.0.117 (released on 20.08.2012 ) " ... " 
+  +ALG [art.get_fname] bug on name len
+
+- version 0.0.114 (released on 11.08.2012 ) Alfa 
+  +GUI Added Syntax Colouring
+  +DIR [config\ext] Class and extension informations
+  +FIL [help\en\syntax_colouring.txt]
+
+  +FIL [config\ext\assembly.utf8] Class for assembly files
+  +FIL [config\ext\asm.assembly] Extension file
+  +FIL [config\ext\inc.assembly] Extension file
+  +FIL [config\ext\equ.assembly] Extension file
+
+- version 0.0.113 (released on 07.08.2012 ) " ... " 
+  +BEH menu "Developer Tools"|"Add new Tool"
+
+- version 0.0.112 (released on 05.08.2012 ) " ... " 
+  +BEH Lx Click on Editor Statusbar sets the directory
+   to be browsable on mnu general path. Useful for
+   Open Documents not included in the Workspace.
+
+- version 0.0.111 (released on 04.08.2012 ) " ... " 
+  instructional video (no audio) about how-to
+  "Developer Tools" at http://youtu.be/HNe_6yt4i6U
+
+- version 0.0.110 (released on 04.08.2012 ) " ... " 
+  +BEH improved on all Developer Tools menu items
+  +FIL [help\en\devtool.txt] Developer Tools how-to help
+
+- version 0.0.106 (released on 04.08.2012 ) alpha 
+  +DIR create the [help] directory
+  +MNU "[path]|"Browse" to explore folder
+  +MNU "Developer tools"|"Add a new Group label"
+  +MNU "Developer tools"|"Remove group"
+
+- version 0.0.105 (released on 03.08.2012 ) alpha 
+  +MNU "Developer tools"|"Reload tools"
+  +MNU "Developer tools"|"Manage tools file (expert user)"
+
+- version 0.0.104 (released on 03.08.2012 ) " ... " 
+  * We start using the following prefixing to describe
+    updates and type of corrections. prefixes are affecting
+    - ALG affecting change in the algorithms
+    - API related to OS functions or x64lab
+    - BEH behaviour/interaction
+    - CFG configuration files
+    - DIR paths and directory
+    - FIL inserted or deleted files
+    - GUI related modifications
+    - MNU affeting menus
+    - RES resources
+
+  +MNU "Developer tools"|"Browse to add new tool"
+  +MNU "Developer tools"|"Remove tool"
+
+- version 0.0.102 (released on 28.07.2012 ) " ... " 
+  + corrected behaviour details by Open Documents
+
+- version 0.0.101 (released on 28.07.2012 ) " ... " 
+  + "Properties|Developer Tools" load and set from [config\devtool.utf8]
+
+- version 0.0.98 (released on 20.07.2012 ) Alpha 
+  + edit and clean
+  + read/write [config\config.utf8] the following paras
+    . version
+    . session
+    . wspace
+    . language
+    . fshow
+    . pos
+    . owner
+  + save last workspace on exit
+  + save lab main position and show flags (max/min/normal)
+  + icons packed in [config\x64lab.bmp]
+  
+- version 0.0.94 (released on 15.07.2012 ) " ... " 
+  + improving behaviour on smartlink
+  + improving behaviour by SetFolder
+  + improving behaviour by folder orientation
+  + corrected bug by Save All
+
+- version 0.0.86 (released on 09.07.2012 ) " ... " 
+  + improving behaviour by Save All
+
+- version 0.0.85 (released on 08.07.2012 ) " ... " 
+  + workaround by treeview loosing focus
+
+- version 0.0.83 (released on 07.07.2012 ) " ... " 
+  + Browse button by user IODLG
+
+- version 0.0.82 (released on 07.07.2012 ) " ... " 
+  + "Edit" menu
+  + "Insert new smartlink" in Edit menu
+  + Default language in plugin\lang\en
+
+- version 0.0.79 (released on 05.07.2012 ) " ... " 
+  + minimal accelerators system
+
+- version 0.0.71 (released on 28.06.2012 ) " ... " 
+  + all source files are utf-8 now
+  + close on double click in Open documents"
+  + further edit and clean
+
+- version 0.0.68 (released on 26.06.2012 ) Alpha_0 
+  + further edit and clean. set to utf-8 encoding  
+
+- version 0.0.54 (released on 24.06.2012 ) 
+  + edit and clean
+  + corrected save/new/load workspace
+
+- version 0.0.37 (released on 22.06.2012)
+  active are the Workspace and File menus entirely
+
+
+

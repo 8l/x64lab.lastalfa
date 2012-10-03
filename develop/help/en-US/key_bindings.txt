@@ -1,0 +1,64 @@
+
+ x64lab
+ Keyboard shortcuts and Key bindings.
+
+  Clicking on the menuitem Configure|"Key bindings" a dialogs opens and
+  allows developer to configure keyboard shortcuts. key bindings 
+  informations are stored in the file [config\accel.utf8].
+  
+  to Bind a command to a key sequence:
+   - choose an available command item in the list
+   - go in the edit box and press a key
+   - check/uncheck modifiers (Alt/Ctrl/Shift) on the right
+   - click on "Set" to accept the sequence.
+
+  the selected item will show the new customized sequence.
+  Click "Rebuild" to allow changes and activate them.
+  Clicking "Cancel" all modifications are lost.
+
+
+ Keyboard commands used in Scintilla (default setting now)
+
+  - Magnify text size             Ctrl+Keypad+
+  - Reduce text size              Ctrl+Keypad-
+  - Restore text size to normal   Ctrl+Keypad/
+
+  - Indent block                  Tab
+  - Dedent block                  Shift+Tab
+
+  - Delete to start of word       Ctrl+BackSpace
+  - Delete to end of word         Ctrl+Delete
+
+  - Delete to start of line       Ctrl+Shift+BackSpace
+  - Delete to end of line         Ctrl+Shift+Delete
+  
+  - Extend selection to start
+     of document                  Ctrl+Shift+Home
+
+  - Extend selection to end
+     of document                  Ctrl+Shift+End
+
+  - Go to start of document       Ctrl+Home
+  - Go to start of display line   Alt+Home
+  - Go to end of document         Ctrl+End
+  - Go to end of display line     Alt+End
+  - Selection duplicate           Ctrl+D
+
+  - Scroll up                     Ctrl+Up
+  - Scroll down                   Ctrl+Down
+
+  - Line cut                      Ctrl+L
+  - Line copy                     Ctrl+Shift+T
+  - Line delete                   Ctrl+Shift+L
+  - Line transpose with previous  Ctrl+T
+
+  - Previous word
+     Shift extends selection      Ctrl+Left
+  - Next word
+     Shift extends selection      Ctrl+Right
+
+  - Rectangular block selection   Alt+Shift+Movement
+  - Extend rectangular selection
+     to start of line             Alt+Shift+Home
+  - Extend rectangular selection
+     to end of line               Alt+Shift+End

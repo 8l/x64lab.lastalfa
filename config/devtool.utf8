@@ -1,0 +1,15 @@
+
+	.:"Assembly tools" (
+		.:"E:\olly\ollydbg.exe"
+	)
+
+	.:"General" (
+		.:"%ProgramFiles(x86)%\HxD\HxD.exe"
+		.:"%ProgramFiles(x86)%\SmidgeonSoft\PEBrowsePro\PEBrowsePro.exe"
+		.:"%SystemRoot%\system32\mspaint.exe"
+		.:"%SystemRoot%\system32\calc.exe"
+	)
+
+	.:"Help Files" (
+		.:"E:\x32lab\help\win32.hlp"
+	)

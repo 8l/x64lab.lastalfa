@@ -1,0 +1,292 @@
+  
+  ;#-------------------------------------------------ß
+  ;|          x64lab  MPL 2.0 License                |
+  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;ö-------------------------------------------------ä
+
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
+
+	;--- from resource.h x64lab.res --------------------
+
+		define IDC_STATIC    -1
+		define ICO_X64LAB     3
+		define IO_DLG         1024
+		define IO_STC1        1025
+		define IO_STC2        1026
+		define IO_CBX         1027
+		define IO_BTN         1028
+		define IO_STC3        1029
+		define IO_EDI         1030
+		define CONS_DLG       1536
+		define CONS_SCI       1537
+		define CONS_CBX       1538
+		define EDIT_DLG       2816
+		define EDIT_STB       2817
+		define EDIT_STC       2818
+		define MPURP_DLG  		2048
+		define MPURP_CBX_CAT  2049
+		define MPURP_CBX_FILT 2050
+		define MPURP_PRG      2051
+		define MPURP_LVIEW    2052
+
+		define KEY_DLG  			1100
+		define KEY_HOT  			1101
+		define KEY_LVW  			1102
+		define KEY_CHK_CTRL		1103
+		define KEY_CHK_ALT		1104
+		define KEY_CHK_SHIFT	1105
+		define KEY_CHK_NOINV	1106
+		define KEY_BTN_SET		1107
+		define KEY_STA_ID  		1108
+
+		;--- hash X64LAB equ  02415AF6C27077B32h
+		;--- hash X64LABD equ 0402E79AC91795914h
+		;--- hash X64LAB\project equ  08035E4A734D7F58Fh
+		;--- hash X64LABD\project equ 0CC6546847FF98F71h
+		;--- hash X64LABD\help equ 48FFF5BB543AAAC9
+		;--- hash X64LABD\help\en equ 33582C52E3F9679C
+		;--- hash X64LAB\help equ 0AEDA4C8C2E06E2Bh
+		;--- hash %X64LAB%\help\en equ 0E728CA7598D7CDBAh
+
+		;--- %X64LABD%\config equ 01005ADEF3F97C6CAh
+		;--- %X64LABD%\config\ext equ 0782F12244955FD4Fh
+		;--- %X64LAB%\config equ 0C1DCA5E40C09F92Ch
+		;--- %X64LAB%\config\ext equ 09DF3F8806B4A8DB1h
+
+	iCAT_CBX_DEVT	equ 1
+
+	MNU_X64LAB equ 1000h
+	MI_USER    equ 1100h
+	MI_OTHER	 equ 1200h
+	MI_LANG		 equ 1300h
+	
+	MP_WSPACE      equ 1001h
+   MI_WS_LOAD    equ 1002h
+   MI_WS_NEW     equ 1003h
+   MI_WS_ADD     equ 1005h
+   MI_WS_BACK    equ 1006h
+   MI_WS_EXP     equ 1007h
+   MI_WS_SAVE    equ 1008h
+   MI_WS_SAVET   equ 1009h
+   MI_WS_RECODE  equ 100Ah
+   MP_WS_REC     equ 100Bh
+   MI_WS_EXIT    equ 100Ch
+
+	MP_FILE       equ 1020h
+   MI_FI_OPEN   equ 1021h
+   MI_FI_NEWF   equ 1022h
+   MI_FI_NEWB   equ 1023h
+   MI_FI_IMP    equ 1024h
+   MI_FI_CLOSE  equ 1025h
+   MI_FI_CCOPY  equ 1026h
+   MI_FI_SAVE   equ 1027h
+   MI_FI_SAVEAS equ 1028h
+   MI_FI_ENCO   equ 1029h
+   MI_FI_BACK   equ 102Ah
+
+	MP_EDIT   				equ 1040h
+	 MI_ED_LNK  			equ 1041h
+   MI_ED_REMITEM		equ 1042h
+	 MI_ED_RELSCICLS	equ 1043h
+
+	MP_CONF   		equ 1060h
+	 MI_CONF_KEY	equ 1061h
+  MP_LANG 			equ 1062h
+	 
+  MP_DEVT   		equ 1070h
+	 MI_DEVT_ADD	equ 1071h
+	 MI_DEVT_ADDG equ 1072h
+	 MI_DEVT_REM	equ 1073h
+	 MI_DEVT_REMG equ 1074h
+	 MI_DEVT_MAN  equ 1075h
+	 MI_DEVT_REL  equ 1076h
+
+	MP_SCI				equ 1077h
+	 MI_SCI_COMML	equ 1078h
+	 MI_SCI_COMMB	equ 1079h
+	 MI_SCI_UNCOMML	equ 107Ah
+	 MI_SCI_UNCOMMB	equ 107Bh
+
+
+	MP_PATH        equ 10A0h
+	 MI_PA_CONS    equ 10A1h
+   MI_PA_BROWSE  equ 10A2h
+   MI_PA_FIND    equ 10A3h
+   MI_PA_COPY    equ 10A4h
+   MI_PA_SETPROP equ 10A5h
+
+
+;  MP_WIN    		equ 1060h
+;	MP_HELP   		equ 1090h
+
+
+	;----------------------------------------------------
+	;--- strings id usable in lang.dll ------------------
+	;----------------------------------------------------
+
+  UZ_ERR_NOFILE  equ 2000h
+  UZ_ERR_NODIR   equ 2001h
+  UZ_HOME        equ 2002h
+  UZ_CONS_WIN    equ 2003h
+  ;--- UZ_EXPR_WIN    equ 2004h
+  UZ_EDIT_PANE   equ 2005h
+  UZ_EDIT_UNTL   equ 2006h
+  UZ_WSPACE      equ 2007h
+  UZ_CURDIR      equ 2008h
+  UZ_FSAVE       equ 2009h
+  UZ_MPWIN       equ 200Ah
+  UZ_CPPROCS     equ 200Bh
+  UZ_CPDIRS      equ 200Ch
+  UZ_CPNOSEL     equ 200Dh
+  UZ_INFO_UTF8   equ 200Eh
+  UZ_INFO_TOP    equ 200Fh
+  UZ_INFO_COPYR  equ 2010h
+  UZ_INFO_CDATE  equ 2011h
+  UZ_INFO_SIZE   equ 2012h
+  UZ_INFO_TYPE   equ 2013h
+  UZ_INFO_BUF    equ 2014h
+  UZ_INFO_SELITEM  equ 2015h
+  UZ_OK          equ 2016h
+  UZ_NO          equ 2017h
+  UZ_CANCEL      equ 2018h
+  UZ_IO_SELDPF   equ 2019h
+  UZ_IO_DPATH    equ 201Ah
+  UZ_IO_KDIR     equ 201Bh
+  UZ_IO_DFNAME   equ 201Ch
+  UZ_IO_EXT      equ 201Dh
+  UZ_WSP_EXT     equ 201Eh
+  UZ_OVERWFILE   equ 201Fh
+  UZ_COURNEW     equ 2020h
+  UZ_IO_NEWWSP   equ 2021h
+  UZ_IO_SAVEWSP  equ 2022h
+	UZ_INFO_LNK	   equ 2023h
+	UZ_LNK_NAME    equ 2024h
+  UZ_LNK_MAP     equ 2025h
+	UZ_LNK_DESC    equ 2026h
+
+  BB_NULL        equ 2027h
+  BB_WSP         equ 2028h
+  BB_FOLDER      equ 2029h
+  BB_CODE        equ 202Ah
+  BB_CALL        equ 202Bh
+  BB_COMMENT     equ 202Ch
+  BB_DATA        equ 202Dh
+  BB_EXPORT      equ 202Eh
+  BB_FLOW        equ 202Fh
+  BB_IMM         equ 2030h
+  BB_IMPORT      equ 2031h
+  BB_LABEL       equ 2032h
+  BB_MACRO       equ 2033h
+  BB_PROC        equ 2034h
+	BB_PROCESS		 equ 2035h
+  BB_REG         equ 2036h
+  BB_RET         equ 2037h
+	BB_SYS				 equ 2038h
+								
+	UZ_DESCR			 equ 2039h
+	UZ_DATEFRM		 equ 203Ah
+	UZ_TIMEFRM		 equ 203Bh
+	UZ_DEFUSER		 equ 203Ch
+	UZ_TOOLCMD		 equ 203Dh
+	UZ_TOOLDESCR	 equ 203Eh
+	UZ_TOOLBYG		 equ 203Fh
+	UZ_TOOLPICK		 equ 2040h
+	UZ_TOOLGEN		 equ 2041h
+	UZ_INFO_TREL   equ 2042h
+	UZ_MSG_U_TGREM equ 2043h
+	UZ_MSG_TADDG 	 equ 2044h
+  UZ_MSG_SCIREL  equ 2045h
+	UZ_MSG_REMITEM equ 2046h
+
+	UZ_REBUILD	equ 2047h
+	UZ_SET			equ 2048h
+	UZ_CTRL			equ 2049h
+	UZ_ALT			equ 204Ah
+	UZ_SHIFT		equ 204Bh
+	UZ_NOINV		equ 204Ch
+	UZ_RESTART  equ 204Eh
+	UZ_NOTASS		equ 204Fh
+	UZ_WZERO		equ 2050h
+
+
+	;--- hash equ for config/config.utf8 items
+  macro @cfg_hash [argid]{
+	 forward
+   result equ 0
+   @xsdbm argid,result
+     hash_#argid equ result
+   }
+
+  @cfg_hash\
+   wspace,\
+   version,\
+	 session,\
+	 fshow,\
+   pos,\
+   tree,\
+   bkcol,\
+	 language,\
+	 owner,\
+	 cdate,\
+   ctime,\
+   adate,\
+   atime
+
+	CFG_FSHOW				equ TRUE
+	CFG_FLOG				equ FALSE
+	CFG_DEF_LCID		equ 0409h
+	CFG_FSPLASH			equ FALSE
+	CFG_UPDATE			equ FALSE
+	CFG_POS 				equ 2BC032000000000h
+
+	CFG_CONS_BKCOL	equ 0AABBCCh
+	CFG_TREE_BKCOL 	equ 0D9FFFFh
+	CFG_DOCS_BKCOL 	equ 00DADCD6h
+	CFG_MPURP_BKCOL equ 00DADADAh
+
+	;--- used for docking info default values ---
+	CFG_MPURP_DOCK_ID		equ 010D63AF1h
+	CFG_WSPACE_DOCK_ID	equ	060B7ACD9h
+	CFG_CONS_DOCK_ID		equ 03AB50C2Ah
+	CFG_DOCS_DOCK_ID		equ 04431B782h
+	CFG_EDIT_DOCK_ID		equ 01C06DAC8h
+
+	CFG_MPURP_POS		equ 200
+	CFG_WSPACE_POS	equ 200
+	CFG_CONS_POS 		equ 200
+	CFG_DOCS_POS		equ 150
+	CFG_EDIT_POS		equ 200
+
+	CFG_MPURP_FLAGS	equ \
+		ALIGN_LEFT or \
+		EXCLUDE_TOP or \
+		EXCLUDE_BOTTOM or\ 
+		EXCLUDE_CLIENT
+
+	CFG_WSPACE_FLAGS equ \
+		ALIGN_RIGHT or \
+		EXCLUDE_TOP or \
+		EXCLUDE_BOTTOM or\ 
+		EXCLUDE_CLIENT
+
+	CFG_CONS_FLAGS equ \
+		ALIGN_BOTTOM or \
+		EXCLUDE_LEFT or \
+		EXCLUDE_RIGHT
+
+	CFG_DOCS_FLAGS equ\
+		ALIGN_RIGHT or \
+		EXCLUDE_TOP or \
+		EXCLUDE_BOTTOM or\ 
+		EXCLUDE_CLIENT
+
+	CFG_EDIT_FLAGS equ\
+		ALIGN_CLIENT
+
+
+ 

@@ -1,0 +1,65 @@
+
+ x64lab
+ Syntax Colouring
+
+  Syntax colouring enhances readability of documents.
+  Colouring informations are stored in the [config\ext] directory,
+  using TOP format files. Example of file with colouring informations is the
+  [config\ext\assembly.utf8]
+
+  Such files ending in ".utf8" may be considered "class" files.
+  In the [config\ext] directory you can find several other 0-byte
+  files that refers each of them to their corresponding class file.
+
+  They show the class in the 2nd part of their filename.
+  These are "extension" files, example.: "inc.assembly"
+  "asm.assembly","equ.assembly"
+ 
+  Note: for the nature of Unicode and languages we dont know
+  a fast and efficient method to distinguish UPPERCASE letters from
+  lovercases. For this reason, having the extension file
+  "asm.assembly" all files ending in ".asm" will be opened
+  correctly. On the contrary no syntax colouring applies to those having ".Asm" 
+  as extension. to allow Syntax Colouring on those ".Asm", create a 0-byte file
+  in the [config\ext] directory and name it as
+  "Asm.assembly".
+
+  The class file (ex.:"assembly.utf8") is a script file of commands for the 
+  Scintilla component. Implemented commands are:
+  
+  lexer      set a lexer for a type of file.
+             a list of all lexers is in the [shared\scintilla.inc]
+             of the source package of x64lab
+             Note: not all lexers have been included in the final build
+             of Scintilla component.
+
+ 	multisel   bool multiple selection
+	stylebits  the bits of the style 
+	tabwidth   number of tabs
+	selback    back color of selection
+	keyword    keywords by highlighting
+	style      after which settings apply
+	back       backcolor of text
+	bold       set bold
+	fore       forecolor of text
+	font       font name
+	fontsize   font size
+	italic     set italic
+	clearall   applies settings as default
+	commline   define string to un/comment a single line
+	commstart  define string to comment-start a block of lines
+	commend    define string to comment-end a block of lines
+
+  
+	- Reload Scintilla Classes
+
+   the Menuitem "Edit|Reload Scintilla Classes" allows user to
+   reload edited classes. Colouring changes apply after reopening
+   eventual current edited files.
+
+
+  
+  
+   
+
+  

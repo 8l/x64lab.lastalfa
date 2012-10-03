@@ -1,0 +1,54 @@
+	;--- Warning!! utf8 no-BOM äöüß
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
+
+	;--- using SCLEX_ASM 34 ; 4 bits
+	lexer:34
+	stylebits:4
+	multisel:1
+	tabwidth:2
+	selback:1,0BABEBAh
+	commline:";---"
+
+	;--- IDX_CPUINSTRUCTION = 0
+	;--- IDX_MATHINSTRUCTION = 1
+	;--- IDX_REGISTER = 2
+	;--- IDX_DIRECTIVE = 3
+	;--- IDX_DIRECTIVEOPERAND = 4
+	;--- IDX_EXTINSTRUCTION = 5
+ 
+	;--- define STYLE_DEFAULT 32
+	style:32
+		back:00F2F2F7h
+		fore:0
+		font:'Courier New'
+		fontsize:12
+		clearall:
+
+	;--- define SCE_ASM_DEFAULT 0
+	;--- define SCE_ASM_COMMENT 1
+	style:1
+		fore:0000B359h
+		italic:1
+
+	;--- define SCE_ASM_NUMBER 2
+	style:2
+		charset:255
+		fore:0537AC1h
+		bold:1
+
+	;--- define SCE_ASM_STRING 3
+	style:3
+		fore:0C1797Bh
+
+	;--- define SCE_ASM_CPUINSTRUCTION 6
+	;--- define SCE_ASM_REGISTER 8
+	;--- define STYLE_LINENUMBER 33
+	style:33
+		back:00AABBCCh
+		fore:0
+		charset:255
+		fontsize:8
+		bold:1
+
+

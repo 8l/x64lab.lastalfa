@@ -1,0 +1,12 @@
+	;--- Uwaga!! utf8 bez BOM'u äöüßąćęłńśóźż
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
+
+	.:\
+		0100800700001h,\
+		0100C00730011h,\
+		0102700710001h,\
+		0107500310011h,\
+		0107800430011h,\
+		0107A00440011h
+

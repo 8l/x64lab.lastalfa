@@ -1,0 +1,58 @@
+
+ x64lab
+ Developer Tools.
+
+  The Edit|"Developer tools" menu allows developer to add
+  favourites tools or frequently used documentation-files
+  to a customized group in order to simplify and make faster
+  access to their contents. Every tool, executable or
+  simple text file belongs to a group. All informations
+  for groups and items are stored in the [config\devtool.utf8]
+  file.
+
+  An instructional video (no audio) about how-to
+  "Developer Tools" is at http://youtu.be/HNe_6yt4i6U
+  
+  All operations from menus should have the Category "Developer Tool"
+  already set in the "Properties" Window.
+
+	to Add a tool:
+  - From the Properties Window:
+    - choose "Developer Tool" in the combobox of categories
+    - choose one of the groups listed from [Tools listed by Gropus]
+    - click eventually on an icon (of an already existent tool)
+      to mark position after witch the new tool will be inserted
+    - click on Edit|"Developer Tools"|"Browse to add new tool" menu 
+      to pick up a tool. Use "Browse" to find the desired tool.
+    - click OK.
+
+	to Remove a tool:
+  - From the Properties Window:
+    - choose "Developer Tool" in the combobox of categories
+    - choose one of the groups listed from [Tools listed by Gropus]
+    - click on an icon of an already existent tool
+    - click on Edit|"Developer Tools"|"Remove tool" menu 
+    
+  to Add a group:
+  - From the Properties Window:
+    - choose "Developer Tool" in the combobox of categories
+    - choose eventually one of the groups listed from [Tools listed by Gropus]
+      combobox in orer to mark position after witch the new group will be inserted.
+    - type a name in that combobox with the current group.
+    - press <Enter> to accept the name as the group name.
+
+
+	to Remove a group:
+  - From the Properties Window:
+    - choose "Developer Tool" in the combobox of categories
+    - choose one of the groups listed from [Tools listed by Gropus]
+    - click on Edit|"Developer Tools"|"Remove group" menu 
+
+  the menu Edit|"Developer Tools"|"Manage tools file (expert user)"
+    is for expert users who knows about a TOP format file. Dont touch
+    it if you dont know what is in there.
+    
+	the menu "Reload tools" usable after editing directly the
+   [config\devtool.utf8] file.
+
+

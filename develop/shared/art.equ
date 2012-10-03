@@ -1,0 +1,76 @@
+  
+  ;#-------------------------------------------------ß
+  ;|          x64lab  MPL 2.0 License                |
+  ;|   Copyright (c) 2009-2012, Marc Rainer Kranz.   |
+  ;|            All rights reserved.                 |
+  ;ö-------------------------------------------------ä
+
+  ;#-------------------------------------------------ß
+  ;| uft-8 encoded üäöß
+  ;| update:
+  ;| filename:
+  ;ö-------------------------------------------------ä
+
+
+
+	;--- unicode ------------
+	MAX_UA_FILELEN				= 100h * 2 + 10h		;unicode aligned 16 file len
+	MAX_UTF16_FILE_CPTS		= 100h
+	MAX_UTF16_ENVN_CPTS		= 100h
+	MAX_UTF16_ENVV_CPTS		= 0A00h
+	MAX_UTF16_URL_CPTS		= 400h		;unicode aligned 16 file len
+	MAX_UTF16_HEAD_CPTS		= 7F8h
+	MAX_EXTLEN equ 78
+
+	URL_BUFLEN	 = MAX_UTF16_URL_CPTS*2+10h
+	HEAD_BUFLEN  = MAX_UTF16_HEAD_CPTS*2+10h
+	FILE_BUFLEN	 = MAX_UTF16_FILE_CPTS*2 + 10h
+	ENVN_BUFLEN	 = MAX_UTF16_ENVN_CPTS*2 + 10h
+	ENVV_BUFLEN	 = MAX_UTF16_ENVV_CPTS*2 + 10h
+
+	;--- dreserve/dcommit/dfree
+	struct DMEM
+		apages	dd 0	;--- available pages
+		used		dd 0	;--- used mem
+		apages2	dd 0	;--- dclear
+		amem		dd 0	;--- dclear
+		dd 0	;--- fragment 16 byte
+		dd 0	;--- >= 32 (and < 64)
+		dd 0	;--- >= 64
+		dd 0	;--- >= 128
+
+		dd 0	;--- >= 256
+		dd 0	;--- >= 512
+		dd 0	;--- >= 1024
+		dd 0	;--- >= 2048
+
+		dd 0	;--- >= 4k
+		dd 0	;--- >= 8k
+		dd 0	;--- >= 16k
+		dd 0	;--- >= 32k
+
+		dd 0	;--- >= 64k
+		dd 0
+		;-----------------------
+	ends
+
+PLUG_CONSOLE	= 1		;console window
+PLUG_HELPER		= 2		;function
+PLUG_CHILD		= 4		;child window
+PLUG_POPUP		= 8		;window popup
+PLUG_HOST			= 10h	;container
+
+;--- flags for 
+;--- shared.get_errstr
+	USE_DLGERRSTR	equ 1
+	USE_SYSERRSTR equ 2
+	USE_CURMODULE	equ 4
+
+
+	struct SYSTIME
+		systime	SYSTEMTIME
+		uzTmFrm	db 64 dup (0)  ;--- "' - 'HH':'mm':'ss",0
+		uzDtFrm	db 128 dup (0) ;--- "'['dddd'] - 'dd'.'MMMM'.'yyyy",0
+		uzTmBuf	db 128 dup (0)
+		uzDtBuf	db FILE_BUFLEN dup (0)
+	ends

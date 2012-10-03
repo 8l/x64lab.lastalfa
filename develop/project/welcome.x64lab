@@ -1,0 +1,21 @@
+	;--- Warning!! utf8 no-BOM äöüß
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
+
+	k:(
+		.:"%X64LAB%"
+		.:"%X64LAB%\help"
+		.:"%X64LAB%\config"
+	)
+	04:02415AF6C27077B32h,"LICENSE.TXT"
+	04:02415AF6C27077B32h,"README.TXT"
+	04:02415AF6C27077B32h,"WHATSNEW.TXT"
+	04:02415AF6C27077B32h,"version.txt"
+
+	03:0C1DCA5E40C09F92Ch,"config"(
+	)
+
+  03:0AEDA4C8C2E06E2Bh,"help" (
+	)
+
+
