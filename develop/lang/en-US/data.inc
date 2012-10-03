@@ -158,6 +158,8 @@
 			UZ_NOINV,0,U8+UR,db "No invert",\
 			UZ_NOTASS,0,U8+UR,db "No assignment",\
 			UZ_WZERO,0,U8+UR,db "0000",\
-			UZ_RESTART,0,U8+UR,db "Please restart x64lab to apply change. Close it now ?"
+			UZ_RESTART,0,U8+UR,db "Please restart x64lab to apply change. Close it now ?",\
+			UZ_MSG_LNK,0,U8+UR,<db "The selected treeitem is empty.",13,10,\
+				"Add this smartlink as its first child item ?">
 
 

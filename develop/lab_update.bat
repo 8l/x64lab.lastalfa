@@ -10,7 +10,6 @@ copy README.TXT ..\ /Y
 
 copy config\x64lab.bmp ..\config /Y
 copy config\docking.bin ..\config /Y
-copy project\welcome.x64lab ..\project /Y
 
 xcopy ext ..\ext\ /E /Y
 xcopy lang\en-US\lang.dll ..\lang\en-US\ /Y
@@ -37,6 +36,10 @@ type WHATSNEW.TXT >> tmpfile.tmp
 copy tmpfile.tmp WHATSNEW.TXT /Y
 del tmpfile.tmp
 copy WHATSNEW.TXT ..\ /Y
+
+echo ------------------------------------
+echo DONT FORGET TO REPACK BEFORE PUSHING
+echo ------------------------------------
 
 set vers=
 set newdate=

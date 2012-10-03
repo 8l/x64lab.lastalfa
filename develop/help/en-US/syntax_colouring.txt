@@ -3,23 +3,24 @@
  Syntax Colouring
 
   Syntax colouring enhances readability of documents.
-  Colouring informations are stored in the [config\ext] directory,
+  Colouring informations are stored in the [ext] directory,
   using TOP format files. Example of file with colouring informations is the
-  [config\ext\assembly.utf8]
+  [ext\assembly.utf8]
 
   Such files ending in ".utf8" may be considered "class" files.
-  In the [config\ext] directory you can find several other 0-byte
+  In the [ext] directory you can find several other 0-byte
   files that refers each of them to their corresponding class file.
 
   They show the class in the 2nd part of their filename.
-  These are "extension" files, example.: "inc.assembly"
-  "asm.assembly","equ.assembly"
+  these are "extension" files, example.: "inc.assembly"
+  "asm.assembly","equ.assembly". they refers all to the class file
+  [assembly.utf8]
  
   Note: for the nature of Unicode and languages we dont know
   a fast and efficient method to distinguish UPPERCASE letters from
   lovercases. For this reason, having the extension file
   "asm.assembly" all files ending in ".asm" will be opened
-  correctly. On the contrary no syntax colouring applies to those having ".Asm" 
+  correctly. on the contrary no syntax colouring applies to those having ".Asm" 
   as extension. to allow Syntax Colouring on those ".Asm", create a 0-byte file
   in the [config\ext] directory and name it as
   "Asm.assembly".

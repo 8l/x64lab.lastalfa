@@ -1,4 +1,8 @@
 
+- version 0.0.137 (released on 03.10.2012 ) " ... " 
+  +BEH Adding smartlink to empty treeitem container, ask for it 
+   setting as child/siblings
+
 - version 0.0.135 (released on 03.10.2012 ) " ... " 
   +REP compilation ok
   +REP online repo ok

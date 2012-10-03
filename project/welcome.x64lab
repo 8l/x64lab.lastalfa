@@ -1,0 +1,32 @@
+	;--- Warning!! utf8 no-BOM äöüß
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
+
+	k:(
+		.:"%X64LAB%\help"
+		.:"%X64LAB%\help\en-US"
+		.:"%X64LAB%\config"
+		.:"%X64LAB%"
+		.:"%X64LAB%\ext"
+	)
+	
+	04:2415AF6C27077B32h,"README.TXT"
+	04:2415AF6C27077B32h,"LICENSE.TXT"
+	04:2415AF6C27077B32h,"WHATSNEW.TXT"
+	03:0C1DCA5E40C09F92Ch,"config"(
+		04:0C1DCA5E40C09F92Ch,"config.utf8"
+		04:0C1DCA5E40C09F92Ch,"devtool.utf8"
+		04:0C1DCA5E40C09F92Ch,"accel.utf8"
+	)
+	03:0AEDA4C8C2E06E2Bh,"help"(
+		03:3DB2E93B5AAC6CB1h,"en-US",(
+			04:3DB2E93B5AAC6CB1h,"devtool.txt"
+			04:3DB2E93B5AAC6CB1h,"key_bindings.txt"
+			04:3DB2E93B5AAC6CB1h,"syntax_colouring.txt"
+		)
+	)
+	03:0DD9D11D92F849B7h,"ext" (
+		04:0DD9D11D92F849B7h,"assembly.utf8"
+		04:0DD9D11D92F849B7h,"topfile.utf8"
+	)
+	

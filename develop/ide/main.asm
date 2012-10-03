@@ -1092,13 +1092,16 @@ winproc:
 
 	push r12
 	push r13
+	push r14
 
+	mov r14,rax
 	mov rsi,rax
+	shl r14,8
 	mov r12,[hRootWsp]
 	mov r13,TVI_FIRST
 	mov rbx,[pLabfWsp]
 	cmp rax,r12
-	jz	.mi_ed_lnkA
+	jz	.mi_ed_lnkA	;--- selected WSP
 
 	;--- get param of selected item ---
 	mov r9,rdi
@@ -1114,6 +1117,14 @@ winproc:
 	test rbx,rbx
 	jz .mi_ed_lnkE
 
+	mov r14l,byte[rdi+\
+		TVITEMW.cChildren]
+	test [.labf.type],\
+		LF_FILE
+	setnz al
+	or r14,rax
+	;--- zero means no children + iscontainer
+
 	mov r9,[.labf.hItem]
 	mov rcx,[hTree]
 	call tree.get_parent
@@ -1126,6 +1137,7 @@ winproc:
 	mov r9,r12
 	mov rcx,[hTree]
 	call tree.get_child
+
 	cmp rax,r13
 	jnz .mi_ed_lnkA
 	mov r13,TVI_FIRST
@@ -1181,6 +1193,33 @@ winproc:
 	jz	.mi_ed_lnkE
 	mov rbx,rax
 
+	test r14l,r14l
+	jnz	.mi_ed_lnkG
+	;--- ask for child / siblings
+
+	sub rsp,\
+		FILE_BUFLEN
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_MSG_LNK
+	call [lang.get_uz]
+
+	mov r8,uzTitle
+	mov rdx,rsp
+	mov rcx,[hMain]
+	call apiw.msg_ync
+	add rsp,\
+		FILE_BUFLEN
+	cmp eax,IDCANCEL
+	jz	.mi_ed_lnkG1
+	cmp eax,IDNO
+	jz .mi_ed_lnkG
+	
+	shr r14,8
+	mov r13,TVI_FIRST
+	mov r12,r14
+	
+.mi_ed_lnkG:
 	mov r8,r13
 	mov rdx,r12
 	mov rcx,rbx
@@ -1195,15 +1234,16 @@ winproc:
 	and [rdx+LABFILE.type],\
 		not LF_MODIF
 
+.mi_ed_lnkG1:
 	mov rcx,rbx
 	call art.a16free
 	xor eax,eax
 
 .mi_ed_lnkE:
+	pop r14
 	pop r13
 	pop r12
 	jmp	.ret0
-
 
 	;ü------------------------------------------ö
 	;|     WS_NEW                               |

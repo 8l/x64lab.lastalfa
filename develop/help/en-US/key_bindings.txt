@@ -17,7 +17,7 @@
   Clicking "Cancel" all modifications are lost.
 
 
- Keyboard commands used in Scintilla (default setting now)
+ Keyboard commands used in Scintilla (default setting now,no change)
 
   - Magnify text size             Ctrl+Keypad+
   - Reduce text size              Ctrl+Keypad-

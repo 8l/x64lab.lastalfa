@@ -3,19 +3,30 @@
 	;--- Copyright Marc Rainer Kranz 2009-2012
 
 	k:(
-		.:"%X64LAB%"
-		.:"%X64LAB%\help"
-		.:"%X64LAB%\config"
-	)
-	04:02415AF6C27077B32h,"LICENSE.TXT"
-	04:02415AF6C27077B32h,"README.TXT"
-	04:02415AF6C27077B32h,"WHATSNEW.TXT"
-	04:02415AF6C27077B32h,"version.txt"
-
-	03:0C1DCA5E40C09F92Ch,"config"(
+		.:"%X64LABD%\help"
+		.:"%X64LABD%\help\en-US"
+		.:"%X64LABD%\config"
+		.:"%X64LABD%"
+		.:"%X64LABD%\ext"
 	)
 
-  03:0AEDA4C8C2E06E2Bh,"help" (
+	04:0402E79AC91795914h,"README.TXT"
+	04:0402E79AC91795914h,"LICENSE.TXT"
+	04:0402E79AC91795914h,"WHATSNEW.TXT"
+	03:01005ADEF3F97C6CAh,"config"(
+		04:1005ADEF3F97C6CAh,"config.utf8"
+		04:1005ADEF3F97C6CAh,"devtool.utf8"
+		04:1005ADEF3F97C6CAh,"accel.utf8"
 	)
-
-
+	03:048FFF5BB543AAAC9h,"help"(
+		03:17EE02DF38B7DC4Fh,"en-US",(
+			04:17EE02DF38B7DC4Fh,"devtool.txt"
+			04:17EE02DF38B7DC4Fh,"key_bindings.txt"
+			04:17EE02DF38B7DC4Fh,"syntax_colouring.txt"
+		)
+	)
+	03:9D49C9DF9F910599h,"ext" (
+		04:9D49C9DF9F910599h,"assembly.utf8"
+		04:9D49C9DF9F910599h,"topfile.utf8"
+	)
+	
