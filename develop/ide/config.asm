@@ -720,6 +720,7 @@ config:
 
 	mov al,09
 	stosb
+
 	;--- insert utf8 warning -------
 	xor edx,edx
 	mov ecx,UZ_INFO_UTF8

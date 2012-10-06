@@ -162,7 +162,8 @@ ends
 		EXCLUDE_CLIENT
 
 	FLOAT_PANEL		equ IS_FLO shl 16
-	HAS_CONTROL		equ HAS_CO shl 16
+	;HAS_CONTROL		equ HAS_CO shl 16 ;--- hash flaw with 1.69.34
+	HAS_CTRL			equ HAS_CO shl 16
 	SHARE_PANEL		equ SHA_PA shl 16
 	SHARE_FIRST		equ SHA_FI shl 16
 	IS_HIDDEN			equ IS_HID shl 16

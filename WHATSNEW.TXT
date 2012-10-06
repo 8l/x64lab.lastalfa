@@ -1,4 +1,11 @@
 
+- version 0.0.141 (released on 06.10.2012 ) Pre-Beta 
+  +FIL [ext\vbscript.utf8] Class for VBscript files (draft)
+  +FIL [ext\utf8.vbscript] Extension file
+  +BEH start default settings when missing [config\docking.bin]
+  +CFG added TNUMBER,TQUOTED to [config\devtool.utf8] items
+       to allow commandline paras and flags. auto reconfiguration.
+
 - version 0.0.138 (released on 04.10.2012 ) Pre-Beta 
   +GUI Update icon according extension, after saving blank file
   +REP edit/clean. root structure, repeated into the develop folder

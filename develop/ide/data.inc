@@ -84,6 +84,7 @@ section '.data' data readable writeable
 		rexpSOL2b	db "\)\(.*\)"
 		rexpTAG2	db "\2",0
 		szDefLang	db "en-US",0
+		szParam		db "param",0
 
 		align 2
 		tmMnuSize	SIZE 6,28

@@ -103,8 +103,97 @@ win:
 	mov rdx,rsi
 	mov rcx,rbx
 	call [dock64.load]
-	mov [hDocker],rax
+	test eax,eax
+	jnz	.controlB
 
+	;--- start default docking settings
+	mov ecx,\
+		sizeof.DOCKITEM*(1+5)
+	sub rsp,rcx
+
+	mov rdx,rsp
+	call art.zeromem
+
+	mov rax,rsp
+	mov ecx,\
+		sizeof.DOCKITEM
+	;------------------------
+	mov [rax+\
+		DOCKITEM.id],41A7h
+	add rax,rcx
+
+	;------------------------
+	mov [rax+\
+		DOCKITEM.id],\
+	CFG_MPURP_DOCK_ID
+	mov [rax+\
+		DOCKITEM.flags],\
+	CFG_MPURP_FLAGS
+	mov [rax+\
+		DOCKITEM.pack_rc],\
+	CFG_MPURP_POS
+	add rax,rcx
+
+	;------------------------
+	mov [rax+\
+		DOCKITEM.id],\
+	CFG_WSPACE_DOCK_ID
+	mov [rax+\
+		DOCKITEM.flags],\
+	CFG_WSPACE_FLAGS
+	mov [rax+\
+		DOCKITEM.pack_rc],\
+	CFG_WSPACE_POS
+	add rax,rcx
+
+	;------------------------
+	mov [rax+\
+		DOCKITEM.id],\
+	CFG_CONS_DOCK_ID
+	mov [rax+\
+		DOCKITEM.flags],\
+	CFG_CONS_FLAGS
+	mov [rax+\
+		DOCKITEM.pack_rc],\
+	CFG_CONS_POS
+	add rax,rcx
+
+	;------------------------
+	mov [rax+\
+		DOCKITEM.id],\
+	CFG_DOCS_DOCK_ID
+	mov [rax+\
+		DOCKITEM.flags],\
+	CFG_DOCS_FLAGS
+	mov [rax+\
+		DOCKITEM.pack_rc],\
+	CFG_DOCS_POS
+	add rax,rcx
+
+	;------------------------
+	mov [rax+\
+		DOCKITEM.id],\
+	CFG_EDIT_DOCK_ID
+	mov [rax+\
+		DOCKITEM.flags],\
+	CFG_EDIT_FLAGS
+	mov [rax+\
+		DOCKITEM.pack_rc],\
+	CFG_EDIT_POS
+
+	;--- load default layout
+	mov r9,1+5
+	mov r8,rsp
+	mov rdx,rsi
+	mov rcx,rbx
+	call [dock64.loadmem]
+	test eax,eax
+	jz	.controlsE
+	add rsp,\
+		sizeof.DOCKITEM*(1+5)
+
+.controlB:
+	mov [hDocker],rax
 	push 0
 	;---------------------
 	mov r10,0

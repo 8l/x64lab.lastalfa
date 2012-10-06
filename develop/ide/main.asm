@@ -43,6 +43,7 @@
 
 	include "macro\mrk_macrow.inc"
 	include "macro\com_macro.inc"
+
 	include "plugin\dock64\equates.inc"
 	include "plugin\top64\equates.inc"
 	include "plugin\bk64\equates.inc"
@@ -1166,7 +1167,7 @@ winproc:
 	lea rdi,[.io.buf]
 	cmp ax,word[rdi]
 	jnz	.mi_ed_lnkB
-	
+
 	mov rax,[.io.ldir]
 	mov rcx,[rax+DIR.rdir]
 	lea rdi,[rax+DIR.dir]

@@ -14,7 +14,7 @@
   They show the class in the 2nd part of their filename.
   these are "extension" files, example.: "inc.assembly"
   "asm.assembly","equ.assembly". they refers all to the class file
-  [assembly.utf8]
+  [ext\assembly.utf8]
  
   Note: for the nature of Unicode and languages we dont know
   a fast and efficient method to distinguish UPPERCASE letters from

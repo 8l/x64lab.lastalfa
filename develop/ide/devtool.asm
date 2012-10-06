@@ -353,6 +353,7 @@ devtool:
 	mov eax,[pTopDevT.items]
 	test eax,eax
 	jnz	.writeA
+
 	;--- insert General tools -------
 	mov eax,'	.:"'
 	stosd
@@ -516,10 +517,22 @@ devtool:
 	lea rsi,[r8+\
 		TITEM.value]
 	rep movsb
-	pop rsi
-
 	mov al,'"'
 	stosb
+
+	;--- param and value
+	mov eax,",0h,"
+	stosd
+	mov al,'"'
+	stosb
+	mov rsi,szParam
+	mov ecx,szParam.size-1
+	rep movsb
+	mov al,'"'
+	stosb
+	;-------------------
+
+	pop rsi
 	@do_eol
 
 	test [rsi+\
@@ -553,6 +566,20 @@ devtool:
 	add rdi,rax
 	mov al,'"'
 	stosb
+	push rsi
+
+	;--- param and value
+	mov eax,",0h,"
+	stosd
+	mov al,'"'
+	stosb
+	mov rsi,szParam
+	mov ecx,szParam.size-1
+	rep movsb
+	mov al,'"'
+	stosb
+	;-------------------
+	pop rsi
 	@do_eol
 	ret 0
 

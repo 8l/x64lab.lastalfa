@@ -1059,12 +1059,14 @@ wspace:
 	stosw
 	mov ax,":0"
 	stosw
+
 	mov rax,[.labf.dir]
 	mov rcx,[rax+DIR.hash]
+
 	mov rdx,rdi
 	call art.qword2a
-
-	add rdi,rax
+	add rdi,rax ;--- 000012345 valid chars 5
+	add rdi,rdx	;--- 000012345 delta to valid is 4
 	mov ax,"h,"
 	stosw
 	mov al,'"'
