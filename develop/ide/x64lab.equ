@@ -94,10 +94,10 @@
    MI_ED_REMITEM		equ 1042h
 	 MI_ED_RELSCICLS	equ 1043h
 
-	MP_CONF   		equ 1060h
-	 MI_CONF_KEY	equ 1061h
-  MP_LANG 			equ 1062h
-	 
+	MP_CONF   				equ 1060h
+	 MI_CONF_KEY			equ 1061h
+  MP_LANG 					equ 1062h
+	
   MP_DEVT   		equ 1070h
 	 MI_DEVT_ADD	equ 1071h
 	 MI_DEVT_ADDG equ 1072h
@@ -111,6 +111,9 @@
 	 MI_SCI_COMMB	equ 1079h
 	 MI_SCI_UNCOMML	equ 107Ah
 	 MI_SCI_UNCOMMB	equ 107Bh
+	
+	MP_UPD				equ 1080h
+	MI_UPD_LANG		equ 1081h
 
 
 	MP_PATH        equ 10A0h

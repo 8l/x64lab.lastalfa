@@ -95,6 +95,8 @@
 			MI_SCI_COMMB,0,U8+UR,db "Comment block/s",\
 			MI_SCI_UNCOMML,0,U8+UR,db "Uncomment by line/s",\
 			MI_SCI_UNCOMMB,0,U8+UR,db "Uncomment block/s",\
+		MP_UPD,0,U8+UR,db "Update",\
+			MI_UPD_LANG,0,U8+UR,db "Language update (script)",\
 		MP_PATH,0,U8+UR,db "[?]",\
 			MI_PA_CONS,0,U8+UR,db "Open console here",\
 			MI_PA_BROWSE,0,U8+UR,db "Browse",\

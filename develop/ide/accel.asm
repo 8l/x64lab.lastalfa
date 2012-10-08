@@ -695,6 +695,11 @@ accel:
 
 .wm_initdC1:
 	push 0
+
+	push 0
+	push MI_UPD_LANG
+	push [hMP_UPD]
+	
 	push 0
 	push MI_CONF_KEY
 	push [hMP_CONF]

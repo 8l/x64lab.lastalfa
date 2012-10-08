@@ -502,6 +502,8 @@ winproc:
 	jz	.mi_sci_uncomml
 	cmp ax,MI_PA_CONS
 	jz	.mi_pa_cons
+	cmp ax,MI_UPD_LANG
+	jz	.mi_upd_lang
 
 	;--- language items
 	cmp ax,MI_LANG
@@ -536,6 +538,51 @@ winproc:
 	jnz	.mi_ws_exit
 	jmp	.ret0
 
+	;ü------------------------------------------ö
+	;|     MI_UPD_LANG                          |
+	;#------------------------------------------ä
+.mi_upd_lang:
+	sub rsp,\
+		FILE_BUFLEN
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_RESTART
+	call [lang.get_uz]
+
+	mov rdx,rsp
+	mov r8,uzTitle
+	mov rcx,[hMain]
+	call apiw.msg_yn
+	cmp eax,IDNO
+	jz	.ret0
+
+	mov rdi,rsp
+	mov rax,[toolDir]
+	xor ecx,ecx
+	lea rsi,[rax+DIR.dir]
+
+	push rcx
+	push uzNoLogo
+	push uzSpace
+	push uzVbsExt
+	push uzLangName
+	push uzSlash
+	push rsi
+	push uzSpace
+	push uzCscript
+	push rdi
+	push rcx
+	call art.catstrw
+	
+	;--- process must be executed in the main app directory
+	mov rax,[appDir]
+	lea r8,[rax+DIR.dir]
+	mov rdx,rsp
+	xor rcx,rcx
+	call wspace.spawn
+	test eax,eax
+	jz	.ret0
+	jmp	.mi_ws_exit
 
 	;ü------------------------------------------ö
 	;|     MI_SCI_UNCOMMLine                      |

@@ -86,6 +86,12 @@ mnu:
 
 	mov r9,4
 	mov r8,rax
+	mov rdx,tMP_UPD
+	mov rcx,[hMnuMain]
+	call .mp_add
+
+	mov r9,5
+	mov r8,rax
 	mov rdx,tMP_PATH
 	mov rcx,[hMnuMain]
 	call .mp_add

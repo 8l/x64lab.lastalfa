@@ -119,7 +119,10 @@ section '.data' data readable writeable
 		uzExeExt   du ".exe",0
 		uzSciExt   du ".sci",0
 		uzBmpExt	 du ".bmp",0
+		uzVbsExt	 du ".vbs",0
 		uzCmd 		 du "cmd " ;--- 16 bytes
+		uzCscript	 du "cscript",0
+		uzNoLogo	 du "//nologo",0
 		uzR				 du "r /e" ;--- "explore" "r /e"  ',"path"'
 
 		uzTreeClass	du "SysTreeView32",0
@@ -174,8 +177,8 @@ section '.data' data readable writeable
 			MI_FI_CLOSE,	5,OWN,DIF
 
 		@mnp MP_EDIT,		0,0,ISS,\
-			MP_WSPACE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
-			MI_ED_LNK,8,OWN,DIF,\
+			MP_WSPACE,		1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
+			MI_ED_LNK,		8,OWN,DIF,\
 			MI_ED_REMITEM,0,OWN,DIF,\
 			-1,\
 			UZ_EDIT_PANE,1,MFS_DISABLED,MIIM_STATE or MIIM_STRING,\
@@ -190,7 +193,7 @@ section '.data' data readable writeable
 			
 		@mnp MP_CONF,		0,0,ISS,\
 			MI_CONF_KEY,	0,OWN,DIF,\
-				UZ_MPWIN,			1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
+				UZ_MPWIN,		1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
 	
 		@mnp MP_LANG,	0,OWN,DIF or MIIM_SUBMENU
 
@@ -203,6 +206,9 @@ section '.data' data readable writeable
 				-1,\
 				MI_DEVT_MAN,	0,OWN,DIF,\
 				MI_DEVT_REL,	0,OWN,DIF
+
+		@mnp MP_UPD,		0,0,ISS,\
+			MI_UPD_LANG,	0,OWN,DIF
 
 		@mnp MP_PATH,		0,RJU,ISS or MIIM_FTYPE,\
 			MI_PA_BROWSE,	0,OWN,DIF,\

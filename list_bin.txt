@@ -12,6 +12,7 @@ config\accel.utf8
 config\x64lab.bmp
 ext\*
 
+tool\lang.vbs
 lang\en-US\lang.dll
 plugin\bk64.dll
 plugin\dock64.dll

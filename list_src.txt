@@ -13,6 +13,7 @@ develop\x64lab.exe.manifest
 develop\x64labd.asm
 develop\x64labd.exe.manifest
 
+develop\tool\lang.vbs
 develop\config\config.utf8
 develop\config\devtool.utf8
 develop\config\docking.bin
