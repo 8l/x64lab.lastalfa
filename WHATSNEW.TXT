@@ -1,4 +1,8 @@
 
+- version 0.0.142 (released on 08.10.2012 ) PreBeta 
+  +MNU added [MP_PATH\Open console here]
+  +GUI modified [MP_PATH\Browse] using "explorer /e,path"
+
 - version 0.0.141 (released on 06.10.2012 ) Pre-Beta 
   +FIL [ext\vbscript.utf8] Class for VBscript files (draft)
   +FIL [ext\utf8.vbscript] Extension file

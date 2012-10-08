@@ -1,0 +1,3 @@
+0) en-US version 0.0.142
+1) it-IT version 0.0.142
+2) pl-PL version 0.0.142

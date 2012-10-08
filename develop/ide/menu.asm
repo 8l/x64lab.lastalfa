@@ -306,7 +306,46 @@ mnu:
 	ret 0
 
 	;#---------------------------------------------------ö
-	;|                SET_DIR                            |
+	;|                GET_DIR  from MP_PATH              |
+	;ö---------------------------------------------------ü
+
+.get_dir:
+	;--- ret RAX dir
+	;--- ret RDX dir,rdir
+	sub rsp,\
+		sizea16.MENUITEMINFOW
+	xor eax,eax
+	mov r9,rsp
+	mov [r9+\
+		MENUITEMINFOW.fMask],\
+		MIIM_DATA
+	mov edx,MP_PATH
+	mov rcx,[hMnuMain]
+	mov [rsp+\
+		MENUITEMINFOW.dwItemData],rax
+	call apiw.mni_get_byid
+	test eax,eax
+	jz	.get_dirE
+
+	mov rdx,[rsp+\
+		MENUITEMINFOW.dwItemData]
+	xor eax,eax
+	test rdx,rdx
+	jz	.get_dirE
+
+	mov rax,rdx
+	test [rdx+DIR.type],\
+		DIR_HASREF
+	cmovnz rax,\
+		[rdx+DIR.rdir]
+
+.get_dirE:
+	add rsp,\
+		sizea16.MENUITEMINFOW
+	ret 0
+
+	;#---------------------------------------------------ö
+	;|                SET_DIR  on MP_PATH                |
 	;ö---------------------------------------------------ü
 
 .set_dir:

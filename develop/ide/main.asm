@@ -26,7 +26,7 @@
 	}
 
 	match =TRUE,DEBUG	{
-		format PE64 CONSOLE 5.0
+		format PE64 GUI 5.0
 	}
 	match =FALSE,DEBUG	{
 		format PE64 GUI 5.0
@@ -500,6 +500,8 @@ winproc:
 	jz	.mi_sci_comml
 	cmp ax,MI_SCI_UNCOMML
 	jz	.mi_sci_uncomml
+	cmp ax,MI_PA_CONS
+	jz	.mi_pa_cons
 
 	;--- language items
 	cmp ax,MI_LANG
@@ -606,39 +608,91 @@ winproc:
 	jmp	.ret0
 
 	;ü------------------------------------------ö
+	;|     PA_CONS                              |
+	;#------------------------------------------ä
+.mi_pa_cons:
+;@break
+	or bl,1
+	jmp	.mi_pa_browseA
+
+	;ü------------------------------------------ö
 	;|     PA_BROWSE                            |
 	;#------------------------------------------ä
 
 .mi_pa_browse:
-	sub rsp,\
-		sizea16.MENUITEMINFOW
+	xor ebx,ebx
 
-	mov r9,rsp
-	mov [r9+\
-		MENUITEMINFOW.fMask],\
-		MIIM_DATA
-	mov edx,MP_PATH
-	mov rcx,[hMnuMain]
-	call apiw.mni_get_byid
-	mov rbx,[rsp+\
-		MENUITEMINFOW.dwItemData]
-	test rbx,rbx
+.mi_pa_browseA:
+	sub rsp,\
+		FILE_BUFLEN+40h
+
+	mov rdi,rsp
+
+	test ebx,ebx
+	jz	.mi_pa_browseC
+
+	;--- console using cmd on "path"
+	mov rax,qword[uzCmd]
+	stosq
+	mov eax," "
+	stosw
+	jmp	.mi_pa_browseB
+
+.mi_pa_browseC:
+	;--- browse using explorer /e,"path"
+	mov rdx,uzExplore
+	mov rax,[rdx]
+	stosq
+	mov rax,[rdx+8]
+	stosq
+	sub rdi,2
+	mov rax,qword[uzR]
+	stosq
+	mov eax,","
+	stosw
+	mov eax,'"'
+	stosw
+
+.mi_pa_browseB:
+	call mnu.get_dir
+	test rax,rax
 	jz	.ret0
 
-	mov rax,rbx
-	test [.dir.type],\
-		DIR_HASREF
-	jz @f
-	mov rax,[.dir.rdir]
-@@:
-	lea r8,[rax+DIR.dir]
-	mov r11,SW_SHOWNORMAL	
-	xor r10,r10
-	xor r9,r9
-	mov edx,uzExplore
+	xor esi,esi
+	lea rcx,[rax+\
+		DIR.dir]
+	test ebx,ebx
+	cmovnz rsi,rcx
+	jnz	.mi_pa_browseB2
+
+	mov rdx,rdi
+	call utf16.copyz
+	add rdi,rax
+	mov eax,'"'
+	stosw
+
+.mi_pa_browseB2:
+	mov r8,rsi
 	xor ecx,ecx
-	call apiw.shexec
+	xor eax,eax
+	stosd
+
+	mov rdx,rsp
+	call wspace.spawn
+
+;---	call mnu.get_dir
+;---	test rax,rax
+;---	jz	.ret0
+;---	lea r8,[rax+DIR.dir]
+;---	mov r11,SW_SHOWNORMAL	
+;---	xor r10,r10
+;---	xor r9,r9
+;---	mov edx,uzExplore
+;---	xor ecx,ecx
+;---	call apiw.shexec
 	jmp	.ret0
+
+
 
 	;ü------------------------------------------ö
 	;|     MI_ED_RELSCICLS                      |

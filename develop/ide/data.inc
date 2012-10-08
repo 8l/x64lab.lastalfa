@@ -106,6 +106,7 @@ section '.data' data readable writeable
 		uzExplore		du "explore",0
 		uzDocking		du "docking",0
 		uzDefLang		du "en-US",0
+		
 
 		uzDefault  du "default"		;<--- follows
 		uzLabExt   du "."
@@ -118,7 +119,9 @@ section '.data' data readable writeable
 		uzExeExt   du ".exe",0
 		uzSciExt   du ".sci",0
 		uzBmpExt	 du ".bmp",0
-	
+		uzCmd 		 du "cmd " ;--- 16 bytes
+		uzR				 du "r /e" ;--- "explore" "r /e"  ',"path"'
+
 		uzTreeClass	du "SysTreeView32",0
 		uzLViewClass	du "SysListView32",0
 		uzCbexClass	du "ComboBoxEx32",0
@@ -202,9 +205,9 @@ section '.data' data readable writeable
 				MI_DEVT_REL,	0,OWN,DIF
 
 		@mnp MP_PATH,		0,RJU,ISS or MIIM_FTYPE,\
-			MI_PA_BROWSE,	0,OWN,DIF
+			MI_PA_BROWSE,	0,OWN,DIF,\
+			MI_PA_CONS,		0,OWN,DIF
 
-		;	MI_PA_CONS,		18,OWN,DIF,\
 		;	MI_PA_FIND,		18,OWN,DIF,\
 		;	MI_PA_COPY,		18,OWN,DIF,\
 		;	MI_PA_SETPROP,18,OWN,DIF

@@ -2915,7 +2915,7 @@ wspace:
 .spawn:
 	;--- in RCX appname
 	;--- in RDX cmdline
-
+	;--- in R8 lpCurrentDirectory
 	push rbp
 	push rdi
 	push rsi
@@ -2929,7 +2929,8 @@ wspace:
 		sizea16.PROCESS_INFORMATION
 
 	mov rdi,rsp
-	mov ecx,(sizea16.STARTUPINFO+\
+	mov ecx,\
+		(sizea16.STARTUPINFO+\
 		sizea16.PROCESS_INFORMATION) / 8
 	xor eax,eax
 	rep stosq
@@ -2956,7 +2957,7 @@ wspace:
 
 	push rdx ;--- PROCESS_INFORMATION
 	push rax ;--- STARTUPINFO
-	push rcx ;--- lpCurrentDirector
+	push r8  ;--- lpCurrentDirectory
 	push rcx ;--- lpEnvironment
 	push rcx ;--- dwCreationFlags
 	push rcx ;--- bInheritHandles

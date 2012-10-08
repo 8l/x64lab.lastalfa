@@ -522,6 +522,7 @@ mpurp:
 ;@break
 	sub rsp,\
 		FILE_BUFLEN*2
+
 	mov rdx,rsp
 	lea rcx,[r8+\
 		TITEM.value]
@@ -565,6 +566,7 @@ mpurp:
 	;call mnu.get_dir
 	;test edx,edx
 	;cmovnz rax,rdx
+
 	mov r11,\
 		SW_SHOWDEFAULT
 	lea r10,[rax+\
@@ -575,6 +577,14 @@ mpurp:
 	xor edx,edx
 	mov rcx,[hMain]
 	call apiw.shexec
+
+;@break
+;---	lea r8,[rax+\
+;---		DIR.dir]
+;---	xor ecx,ecx
+;---	lea rdx,[rsp+\
+;---		FILE_BUFLEN]
+;---	call wspace.spawn
 
 .lddE:
 	add rsp,\
