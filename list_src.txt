@@ -13,7 +13,6 @@ develop\x64lab.exe.manifest
 develop\x64labd.asm
 develop\x64labd.exe.manifest
 
-develop\tool\lang.vbs
 develop\config\config.utf8
 develop\config\devtool.utf8
 develop\config\docking.bin
@@ -93,6 +92,12 @@ develop\lang\lang.inc
 develop\lang\main.asm
 develop\lang\makeall.bat
 develop\lang\makeone.bat
+
+develop\lang\makelist.vbs
+develop\lang\lang.txt
+develop\tool\lang.vbs
+develop\lang\pl-PL\data.inc
+
 develop\lang\en-US\data.inc
 
 develop\plugin\top64\code.asm
@@ -111,3 +116,4 @@ develop\shared\unicode.asm
 develop\shared\unicode.inc
 develop\shared\uxtheme.inc
 develop\shared\win64w.inc
+

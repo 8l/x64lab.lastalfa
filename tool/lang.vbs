@@ -82,6 +82,7 @@
 		std_out.writeblanklines(1)
 	end if
 
+	std_out.writeline " Download plugin..."
 	download "http://x64lab.googlecode.com/hg/lang/" & strLang & "/lang.dll", loc_dir & strLang & "\lang.dll"
 	set fso = Nothing
 	set file = Nothing

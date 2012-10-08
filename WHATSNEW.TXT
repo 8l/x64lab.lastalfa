@@ -1,4 +1,7 @@
 
+- version 0.0.145 (released on 08.10.2012 ) " ... " 
+  +BEH Language support. Download/Update language plugins
+
 - version 0.0.144 (released on 08.10.2012 ) Pre-Beta 
   +FIL added [tool\lang.vbs] Language update script  
   +FIL added [develop\tool\lang.vbs] Language update script
