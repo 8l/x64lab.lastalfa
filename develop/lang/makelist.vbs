@@ -18,7 +18,7 @@
 
 	set objFile = objFSO.CreateTextFile(listfile,true,false)
 	objFile.WriteLine "0) en-US " & version
-	objFile.Write     "1) pl-PL " & version
+	objFile.WriteLine "1) pl-PL " & version
 	objFile.Close
 
 	set objFSO = nothing

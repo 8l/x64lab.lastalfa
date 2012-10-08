@@ -47,6 +47,7 @@
 	std_out.writeline " Press simply <enter> will quit"
 	std_out.writeblanklines(1)
 	std_out.Write content
+	std_out.writeblanklines(1)
 
 	strIdx = std_in.ReadLine
 	std_out.writeblanklines(1)
