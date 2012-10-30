@@ -45,9 +45,16 @@ macro @reg2rect argrect,argreg {
 }
 
 macro @rect2reg argreg,argrect {
+	;--- all SSE2
 	movdqu xmm0,dqword[argrect]
-	packusdw xmm0,xmm0
-	movq argreg,xmm0
+	pcmpeqw xmm1,xmm1
+	psrld xmm1,17
+	pand xmm0,xmm1
+	packssdw xmm0,xmm0
+	movq argrect,xmm0
+	;---	movdqu xmm0,dqword[argrect]
+	;---	packusdw xmm0,xmm0
+	;---	movq argreg,xmm0
 }
 
 

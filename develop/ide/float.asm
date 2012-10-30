@@ -102,6 +102,7 @@ float:
 
 	mov r10,\
 		DT_END_ELLIPSIS or \
+		DT_CENTER	 or \
 		DT_NOCLIP
 	mov r9,r12
 	or r8,-1

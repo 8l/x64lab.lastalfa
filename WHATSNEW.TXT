@@ -1,4 +1,7 @@
 
+- version 0.0.155 (released on 30.10.2012 ) " ... " 
+	+ALG fixed [@rect2reg] macro working with SSE2 now
+
 - version 0.0.154 (released on 30.10.2012 ) " ... " 
   +REP This is the last Alpha release
   +GUI Templates manager plugin 

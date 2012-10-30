@@ -918,6 +918,7 @@ config:
 	mov [rax+8],r8
 
 	@rect2reg rcx,rax
+
 	lea rdx,[rsp+\
 		sizeof.WINDOWPLACEMENT]
 	call art.qword2a
