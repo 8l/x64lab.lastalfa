@@ -311,6 +311,30 @@ mnu:
 	pop rbx
 	ret 0
 
+.get_data:
+	;--- in RCX hMenu
+	;--- in RDX menuid
+	;--- ret RAX data
+	sub rsp,\
+		sizea16.MENUITEMINFOW
+	xor eax,eax
+	mov r9,rsp
+	mov [r9+\
+		MENUITEMINFOW.fMask],\
+		MIIM_DATA
+	mov [rsp+\
+		MENUITEMINFOW.dwItemData],rax
+	call apiw.mni_get_byid
+
+	mov rdx,[rsp+\
+		MENUITEMINFOW.dwItemData]
+	xor eax,eax
+	test rdx,rdx
+	cmovnz rax,rdx
+	add rsp,\
+		sizea16.MENUITEMINFOW
+	ret 0
+
 	;#---------------------------------------------------ö
 	;|                GET_DIR  from MP_PATH              |
 	;ö---------------------------------------------------ü

@@ -1,15 +1,17 @@
+	;--- Warning!! utf8 no-BOM äöüß
+	;--- TOP format file for x64lab
+	;--- Copyright Marc Rainer Kranz 2009-2012
 
-	.:"Assembly tools" (
-		.:"E:\olly\ollydbg.exe"
+	.:"Assembly tools"(
+		.:"E:\olly\ollydbg.exe",0Ah,""
+	)
+	.:"General"(
+		.:"%ProgramFiles(x86)%\HxD\HxD.exe",0Ah,""
+		.:"%ProgramFiles(x86)%\SmidgeonSoft\PEBrowsePro\PEBrowsePro.exe",0Ah,""
+		.:"%SystemRoot%\system32\mspaint.exe",0Ah,""
+		.:"%SystemRoot%\system32\calc.exe",0Ah,""
+	)
+	.:"Help Files"(
+		.:"E:\x32lab\help\win32.hlp",0Ah,""
 	)
 
-	.:"General" (
-		.:"%ProgramFiles(x86)%\HxD\HxD.exe"
-		.:"%ProgramFiles(x86)%\SmidgeonSoft\PEBrowsePro\PEBrowsePro.exe"
-		.:"%SystemRoot%\system32\mspaint.exe"
-		.:"%SystemRoot%\system32\calc.exe"
-	)
-
-	.:"Help Files" (
-		.:"E:\x32lab\help\win32.hlp"
-	)

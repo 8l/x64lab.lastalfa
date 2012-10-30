@@ -19,6 +19,7 @@ develop\config\docking.bin
 develop\config\accel.utf8
 develop\config\x64lab.bmp
 develop\ext\*
+develop\template\*
 develop\project\welcome.x64lab
 
 develop\equates\COMCTL64.INC
@@ -39,15 +40,18 @@ develop\ide\console.asm
 develop\ide\data.inc
 develop\ide\devtool.asm
 develop\ide\edit.asm   
-develop\ide\ext.asm  
+develop\ide\ext.asm
+develop\ide\float.asm
 develop\ide\iodlg.asm 
 develop\ide\lang.asm  
 develop\ide\main.asm   
 develop\ide\menu.asm   
-develop\ide\mpurp.asm   
+develop\ide\mpurp.asm
+develop\ide\plug.asm
 develop\ide\resource.h 
 develop\ide\sciwrap.asm
 develop\ide\structs.inc
+develop\ide\template.asm
 develop\ide\tree.asm   
 develop\ide\window.asm 
 develop\ide\wspace.asm 

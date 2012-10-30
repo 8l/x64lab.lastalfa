@@ -47,7 +47,6 @@ console:
 	mov r10d,[rdi+RECT.right]
 	sub r10d,[rdi+RECT.left]
 	mov r9d,[rdi+RECT.top]
-	add r9d,CY_GAP
 	mov r8d,[rdi+RECT.left]
 	mov rdx,HWND_TOP
 	mov rcx,[.cons.hCbx]
@@ -59,7 +58,7 @@ console:
 
 	mov r11d,[rdi+RECT.bottom]
 	sub r11d,[rdi+RECT.top]
-	sub r11d,CY_GAP*3
+	sub r11d,CY_GAP*2
 	mov ecx,[rsp+RECT.bottom]
 	sub ecx,[rsp+RECT.top]
 	sub r11d,ecx
@@ -70,7 +69,7 @@ console:
 	mov r9d,[rdi+RECT.top]
 	add r9d,[rsp+RECT.bottom]
 	sub r9d,[rsp+RECT.top]
-	add r9d,CY_GAP*2
+	add r9d,CY_GAP
 
 	mov r8d,[rdi+RECT.left]
 	mov rdx,HWND_TOP
@@ -80,9 +79,12 @@ console:
 
 
 .wm_initdialog:
-;@break
-	mov rbx,[pCons]
+	mov rbx,r9
+	mov [.cons.hwnd],rcx
 	mov rdi,apiw.get_dlgitem
+	mov r8,rbx
+	call apiw.set_wldata
+	mov [.cons.id],CONS_DLG
 
 	mov rdx,CONS_CBX
 	mov rcx,[.hwnd]

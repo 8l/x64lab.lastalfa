@@ -714,10 +714,8 @@ accel:
 	push 0
 	push MI_DEVT_ADD
 	push MI_DEVT_REM
-	push MI_DEVT_ADDG
 	push MI_DEVT_REMG
-	push MI_DEVT_MAN
-	push MI_DEVT_REL
+	push MI_DEVT_ADDG
 	push [hMP_DEVT]
 
 	push 0

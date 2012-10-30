@@ -1,4 +1,17 @@
 
+- version 0.0.154 (released on 30.10.2012 ) " ... " 
+  +REP This is the last Alpha release
+  +GUI Templates manager plugin 
+  +FIL [help\en-US\template.txt]
+
+- version 0.0.151 (released on 27.10.2012 ) " ... " 
+  +RES Added some new icons
+  +GUI Tooltips. start application
+  +ALG Improved/extended devtool load/save
+
+- version 0.0.146 (released on 19.10.2012 ) " ... " 
+  +ALG simplify access to language [config.open]
+
 - version 0.0.145 (released on 08.10.2012 ) " ... " 
   +BEH Language support. Download/Update language plugins
 

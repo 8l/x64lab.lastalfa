@@ -14,6 +14,7 @@
 	;--- from resource.h x64lab.res --------------------
 
 		define IDC_STATIC    -1
+
 		define ICO_X64LAB     3
 		define IO_DLG         1024
 		define IO_STC1        1025
@@ -28,22 +29,42 @@
 		define EDIT_DLG       2816
 		define EDIT_STB       2817
 		define EDIT_STC       2818
-		define MPURP_DLG  		2048
-		define MPURP_CBX_CAT  2049
-		define MPURP_CBX_FILT 2050
-		define MPURP_PRG      2051
-		define MPURP_LVIEW    2052
-
 		define KEY_DLG  			1100
 		define KEY_HOT  			1101
 		define KEY_LVW  			1102
-		define KEY_CHK_CTRL		1103
-		define KEY_CHK_ALT		1104
-		define KEY_CHK_SHIFT	1105
-		define KEY_CHK_NOINV	1106
-		define KEY_BTN_SET		1107
+		define KEY_BTN_SET  	1107
+		define KEY_CHK_CTRL  	1103
+		define KEY_CHK_ALT  	1104
+		define KEY_CHK_SHIFT  1105
+		define KEY_CHK_NOINV  1106
 		define KEY_STA_ID  		1108
 
+		define DEVT_DLG  			2048
+		define DEVT_TLB  			2049
+		define DEVT_CBX  			2050
+		define DEVT_LVW  			2051
+
+		define TMPL_DLG  2100
+		define TMPL_LVWT  2101
+		define TMPL_LVWC  2102
+		define TMPL_TLB  2103
+
+		define TOOL_DLG  2200
+		define TOOL_DIR  2201
+		define TOOL_NAME  2202
+		define TOOL_PARA  2203
+		define TOOL_FPARA  2204
+		define TOOL_FSHOW  2205
+		define TOOL_FHIDE  2206
+		define TOOL_FSTART  2207
+		define TOOL_ICO  2208
+		define TOOL_LNAME  2209
+		define TOOL_LPARA  2210
+
+		define PER_MPURP_CBX  2900
+		define PER_MPURP_PRG  2901
+		define PER_MPURP 			2902
+		
 		;--- hash print line 1858 wspace.asm in debug mode GUI
 
 		;--- AEDA4C8C2E06E2B  %X64LAB%\help
@@ -58,7 +79,7 @@
 		;--- 402E79AC91795914 %X64LABD%
 		;--- 9D49C9DF9F910599 %X64LABD%\ext
 
-	iCAT_CBX_DEVT	equ 1
+	iMPURP_DEVT	equ 0
 
 	MNU_X64LAB equ 1000h
 	MI_USER    equ 1100h
@@ -103,8 +124,8 @@
 	 MI_DEVT_ADDG equ 1072h
 	 MI_DEVT_REM	equ 1073h
 	 MI_DEVT_REMG equ 1074h
-	 MI_DEVT_MAN  equ 1075h
-	 MI_DEVT_REL  equ 1076h
+	;---	 MI_DEVT_MAN  equ 1075h
+	;---	 MI_DEVT_REL  equ 1076h
 
 	MP_SCI				equ 1077h
 	 MI_SCI_COMML	equ 1078h
@@ -217,6 +238,17 @@
 	UZ_WZERO		equ 2050h
 	UZ_MSG_LNK	equ 2051h
 
+	UZ_TEMPLATE	equ 2052h
+	UZ_TMPL_SNI	equ 2053h
+	UZ_TMPL_MOD	equ 2054h
+	UZ_TMPL_PRJ	equ 2055h
+	UZ_TMPL_WSP	equ 2056h
+	UZ_TMPL_NET	equ 2057h
+	UZ_TMPL_SET	equ 2058h
+
+
+
+
 
 	;--- hash equ for config/config.utf8 items
   macro @cfg_hash [argid]{
@@ -251,7 +283,7 @@
 	CFG_CONS_BKCOL	equ 0AABBCCh
 	CFG_TREE_BKCOL 	equ 0D9FFFFh
 	CFG_DOCS_BKCOL 	equ 00DADCD6h
-	CFG_MPURP_BKCOL equ 00DADADAh
+	CFG_DEVT_BKCOL equ 00DADADAh
 
 	;--- used for docking info default values ---
 	CFG_MPURP_DOCK_ID		equ 010D63AF1h

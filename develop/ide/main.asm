@@ -26,7 +26,7 @@
 	}
 
 	match =TRUE,DEBUG	{
-		format PE64 GUI 5.0
+		format PE64 CONSOLE 5.0
 	}
 	match =FALSE,DEBUG	{
 		format PE64 GUI 5.0
@@ -70,9 +70,11 @@ section '.code' code readable executable
 	include "config.asm"
 	include "window.asm"
 	include "edit.asm"
+	include "float.asm"
 	include "menu.asm"
 	include "tree.asm"
 	include "accel.asm"
+	include "plug.asm"
 	include "console.asm"
 	include "mpurp.asm"
 	include "sciwrap.asm"
@@ -81,6 +83,7 @@ section '.code' code readable executable
 	include "devtool.asm"
 	include "ext.asm"
 	include "lang.asm"
+	include "template.asm"
 
 start:
 	;	call get_version
@@ -108,8 +111,11 @@ start:
 		sizeof.CONFIG+\
 		sizeof.CONS+\
 		sizeof.KEYDLG+\
+		sizeof.DEVT+\
+		sizeof.TMPL+\
+		sizeof.TOOLDLG+\
 		sizeof.MPURP+\
-		(sizeof.IODLG*5)+\
+		(sizeof.IODLG*4)+\
 		sizeof.EDIT
 
 	@frame rax
@@ -183,7 +189,8 @@ start:
 		ICC_TREEVIEW_CLASSES or \
 		ICC_TAB_CLASSES or \
 		ICC_USEREX_CLASSES or \
-		ICC_LISTVIEW_CLASSES
+		ICC_LISTVIEW_CLASSES or \
+		ICC_TOOLTIP_CLASSES
 	call apiw.icex
 
 	mov rdx,ICO_X64LAB
@@ -341,8 +348,7 @@ start:
 
 	xor ecx,ecx
 	call apiw.exitp
-	;--- ret 0
-
+	
 	;ü------------------------------------------ö
 	;|     WINPROC                              |
 	;#------------------------------------------ä
@@ -482,10 +488,6 @@ winproc:
 	jz	.mi_devt_add
 	cmp ax,MI_DEVT_REM
 	jz	.mi_devt_rem
-	cmp ax,MI_DEVT_MAN
-	jz	.mi_devt_man
-	cmp ax,MI_DEVT_REL
-	jz	.mi_devt_rel
 	cmp ax,MI_DEVT_REMG
 	jz	.mi_devt_remg
 	cmp ax,MI_DEVT_ADDG
@@ -727,16 +729,16 @@ winproc:
 	mov rdx,rsp
 	call wspace.spawn
 
-;---	call mnu.get_dir
-;---	test rax,rax
-;---	jz	.ret0
-;---	lea r8,[rax+DIR.dir]
-;---	mov r11,SW_SHOWNORMAL	
-;---	xor r10,r10
-;---	xor r9,r9
-;---	mov edx,uzExplore
-;---	xor ecx,ecx
-;---	call apiw.shexec
+	;---	call mnu.get_dir
+	;---	test rax,rax
+	;---	jz	.ret0
+	;---	lea r8,[rax+DIR.dir]
+	;---	mov r11,SW_SHOWNORMAL	
+	;---	xor r10,r10
+	;---	xor r9,r9
+	;---	mov edx,uzExplore
+	;---	xor ecx,ecx
+	;---	call apiw.shexec
 	jmp	.ret0
 
 
@@ -748,16 +750,7 @@ winproc:
 	call ext.discard
 	call ext.setup
 	mov ecx,UZ_MSG_SCIREL
-	jmp	.mi_devt_addgA
 
-	;ü------------------------------------------ö
-	;|     DEVT_ADDG                            |
-	;#------------------------------------------ä
-.mi_devt_addg:
-	mov ecx,\
-		UZ_MSG_TADDG
-
-.mi_devt_addgA:
 	sub rsp,\
 		FILE_BUFLEN
 	mov r8,rsp
@@ -768,6 +761,14 @@ winproc:
 	mov rdx,rsp
 	mov rcx,[hMain]
 	call apiw.msg_ok
+	jmp	.ret0
+
+	;ü------------------------------------------ö
+	;|     DEVT_ADDG                            |
+	;#------------------------------------------ä
+.mi_devt_addg:
+	xor ecx,ecx
+	call devtool.addgroup
 	jmp	.ret0
 
 	;ü------------------------------------------ö
@@ -775,66 +776,6 @@ winproc:
 	;#------------------------------------------ä
 .mi_devt_remg:
 	call devtool.remgroup
-	jmp	.ret0
-
-
-	;ü------------------------------------------ö
-	;|     DEVT_REL                             |
-	;#------------------------------------------ä
-
-.mi_devt_rel:
-	call devtool.discard
-	call devtool.load
-	mov ecx,iCAT_CBX_DEVT
-	call mpurp.sel_icat
-	xor ecx,ecx
-	call mpurp.sel_ifilt
-	jmp	.ret0
-
-	;ü------------------------------------------ö
-	;|     DEVT_MAN                             |
-	;#------------------------------------------ä
-.mi_devt_man:
-	sub rsp,\
-		FILE_BUFLEN
-	xor edx,edx
-	mov rax,rsp
-
-	push rdx
-	push uzUtf8Ext
-	push uzDevTName
-	push rax
-	push rdx
-	call art.catstrw
-
-	mov rax,[confDir]
-	lea rcx,[rax+DIR.dir]
-
-	mov r8,\
-		LF_FILE or\
-		LF_TXT
-	mov rdx,rsp
-	call wspace.new_labf
-	test eax,eax
-	jz .ret0
-
-	mov rcx,rax
-	call wspace.open_file
-	test eax,eax
-	jz .ret0
-
-	mov rcx,rax
-	call edit.view
-
-	mov r8,rsp
-	mov edx,U16
-	mov ecx,UZ_INFO_TREL
-	call [lang.get_uz]
-
-	mov r8,uzTitle
-	mov rdx,rsp
-	mov rcx,[hMain]
-	call apiw.msg_ok
 	jmp	.ret0
 
 	;ü------------------------------------------ö
@@ -1390,7 +1331,7 @@ winproc:
 	mov rcx,[hMain]
 	call win.controls
 
-	call devtool.load
+	;call devtool.load
 
 	mov rax,[pConf]
 
@@ -1484,6 +1425,10 @@ winproc:
 	or [.labf.type],\
 		LF_MODIF
 	jmp	.exit
+
+	;ü------------------------------------------ö
+	;|     MI_FI_NEWB                           |
+	;#------------------------------------------ä
 
 .mi_fi_newb:
 	call wspace.new_bt
@@ -1682,7 +1627,7 @@ winproc:
 
 .wm_destroy:
 	call config.write
-	call devtool.discard
+;---	call devtool.discard
 
 	xor rcx,rcx
 	call [PostQuitMessage]

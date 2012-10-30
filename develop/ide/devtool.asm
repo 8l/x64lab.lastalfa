@@ -24,144 +24,508 @@ devtool:
 		.dir	DIR
 	end virtual
 
-.start:
-	;--- in RCX 0,dir
-	;--- in RDX param top pointer item
-	;--- ret RAX 0,IDOK
+	virtual at rbx
+		.devt	DEVT
+	end virtual
 
-	test ecx,ecx
-	jz	.startA
-
-	xor r11,r11
-	mov rax,[pIo]
-	add rax,IO_DEVTOOL
-	mov [rax+IODLG.param],rdx
-	mov [rax+IODLG.ldir],rcx
-	mov qword[rax+\
-		IODLG.buf],r11
-
-.startA:	
-	xor r10,r10
-	mov r9,.proc
-	mov r8,[hMain]
-	mov rdx,IO_DLG
-	mov rcx,[hInst]
-	call apiw.dlgbp
-	ret 0
+	virtual at rsi
+		.devtitem	DEVTITEM
+	end virtual
 
 .proc:
 @wpro rbp,\
 		rbx rsi rdi
 
 	cmp edx,\
+		WM_WINDOWPOSCHANGED
+	jz	.wm_poschged
+	cmp edx,WM_COMMAND
+	jz	.wm_command
+	cmp edx,WM_NOTIFY
+	jz	.wm_notify
+	cmp edx,\
 		WM_INITDIALOG
 	jz	.wm_initd
 	cmp edx,\
-		WM_COMMAND
-	jz	.wm_command
+		WM_DESTROY
+	jz	.wm_destroy
 	jmp	.ret0
 
+.get_data:
+	;--- RET RAX = RBX 0,data
+	call apiw.get_wldata
+	mov rbx,rax
+	test rax,rax
+	ret 0
 
-.wm_command:
-	mov rax,r8
+.wm_notify:
+	mov rbx,[pDevT]
+	mov rdx,[r9+\
+		NMHDR.hwndFrom]
+	cmp rdx,[.devt.hLvw]
+	jz	.lvw_notify
+	cmp rdx,[.devt.hCbx]
+	jz	.cbx_notify
+	cmp rdx,[hTip]
+	jz	.tip_notify
+	cmp rdx,[.devt.hTlb]
+	jz	.tlb_notify_real
+	jmp	.ret0
+
+.tlb_notify_real:
+	mov edx,[r9+NMHDR.code]
+	cmp edx,TBN_GETINFOTIPW
+	jnz	.ret0
+;@break
+	xor r8,r8
+	xor r9,r9
+	mov rcx,[hTip]
+	call tip.popup
+	jmp	.ret0
+	
+.tip_notify:
+	mov rax,[r9+\
+		NMHDR.idFrom]
+	cmp rax,[.devt.hTlb]
+	jnz	.ret0
+
+.tlb_notify:
+	mov edx,[r9+NMHDR.code]
+	cmp edx,TTN_GETDISPINFOW
+	jz	.tip_getdispinfo
+	jmp	.ret0
+
+.tip_getdispinfo:
+	mov rdi,r9
+	mov rax,[r9+NMTTDISPINFO.lpszText]
+	mov rax,uzDefault
+	mov [r9+NMTTDISPINFO.lpszText],rax
+
+	sub rsp,8+\
+		sizeof.TBBUTTON
+	call apiw.get_msgpos
+	mov ecx,eax
 	and eax,0FFFFh
-	mov [.wparam],rax
-	cmp ax,IDCANCEL
-	jz	.id_cancel
-	cmp ax,IDOK
-	jz	.id_ok
-	cmp ax,IO_BTN
-	jz	.io_btn
-	jmp	.ret0
+	and ecx,0FFFF0000h
+	shl rcx,16
+	or rax,rcx
+	mov [rsp],rax
 
-.wm_initd:
-	mov rcx,[.hwnd]
-	call iodlg.set_pos
+	mov r9,1
+	mov r8,rsp
+	mov rdx,[.devt.hTlb]
+	mov rcx,0
+	call apiw.map_wpt
 
-	mov rcx,[.hwnd]
-	call iodlg.get_hwnds
+	mov r9,rsp
+	xor r8,r8
+	mov edx,TB_HITTEST
+	mov rcx,[.devt.hTlb]
+	call apiw.sms
+	test eax,eax
+	js	.ret0
 
-	push 0            ;--- terminator
-	push UZ_OK        ;--- IDOK
-	push UZ_CANCEL    ;--- IDCANCEL 
-	push UZ_CPNOSEL   ;--- IO_EDI
-	push UZ_TOOLCMD   ;--- IO_STC3
-	push UZ_TOOLPICK  ;--- IO_BTN
-	push -1           ;--- IO_CBX
-	push UZ_IO_KDIR   ;--- IO_STC2
-	push UZ_TOOLDESCR ;--- IO_STC1
-	push MI_DEVT_ADD  ;--- IO_DLG
-	mov rcx,rsp
-
-	call iodlg.set_strings
-
-	mov rdx,[pIo]
-	add rdx,IO_DEVTOOL
-	mov rcx,[pHu]
-	call iodlg.set_kdirs
-
-	xor edx,edx
-	mov rax,[pHu]
-	mov rcx,[rax+HU.hEdi]
-	call apiw.en_win
-
-	jmp	.ret1
-
-.io_btn:
-	mov rsi,[pIo]
-	add rsi,IO_DEVTOOL
-	mov rbx,[pHu]
-	lea rdi,[.io.buf]
-
-	mov r9,rdi
-	mov r8,0\
-		or FOS_NODEREFERENCELINKS\
-		or FOS_ALLNONSTORAGEITEMS\
-		or FOS_PATHMUSTEXIST
-	mov rcx,rbx
-	call iodlg.set_browsedir
-
-	mov eax,[rdi]
+	mov r9,rsp
+	mov r8,rax
+	mov rcx,[.devt.hTlb]
+	call tlb.get_but
 	test eax,eax
 	jz	.ret0
 
-	mov rcx,rdi
-	call art.is_file
+	mov edx,[rsp+\
+		TBBUTTON.idCommand]
+	mov rcx,[tMP_DEVT]
+	call mnu.get_data
+	test eax,eax
 	jz	.ret0
 
-	mov rcx,rdi
-	call art.get_fname
+	lea rdx,[rax+\
+		sizeof.OMNI]
+	mov [rdi+\
+		NMTTDISPINFO.lpszText],rdx
+	jmp	.ret1
 
-	;--- RET EAX 0,numchars
-	;--- RET ECX total len
-	;--- RET EDX pname "file.asm"
-	;--- RET R8 string
-
-	test eax,eax	;--- err get_fname
-	jz	.ret0
-
-	cmp eax,ecx
-	jz	.ret0		;--- nopath
-
-	mov r9,rdx
-	mov rcx,[rbx+HU.hEdi]
-	call win.set_text
-
+.cbx_notify:
+	mov edx,[r9+NMHDR.code]
+	cmp edx,CBEN_ENDEDITW
+	jz	.cbx_endedit
 	jmp	.ret0
 
-.id_ok:
-.id_cancel:	
-	mov rcx,[.hwnd]
-	call iodlg.store_pos
+.cbx_endedit:
+	mov eax,[r9+\
+		NMCBEENDEDITW.fChanged]
+	test eax,eax
+	jz	.ret0
+	mov eax,[r9+\
+		NMCBEENDEDITW.iWhy]
+	cmp eax,CBENF_RETURN
+	jnz	.ret0
 
-	mov rdx,[pIo]
-	add rdx,IO_DEVTOOL
-	mov rcx,[pHu]
-	call iodlg.store_lastdir
+	lea rcx,[r9+\
+		NMCBEENDEDITW.szText]
+	call .addgroup
+	jmp	.ret0
+
+.lvw_notify:
+	mov edx,[r9+\
+		NMHDR.code]
+	cmp edx,NM_DBLCLK
+	jz	.lvw_dblclk
+	cmp edx,\
+		LVN_ITEMCHANGED
+	jz	.lvw_ichged
+	jmp .ret0
 	
-	mov rdx,[.wparam]
+.lvw_ichged:
+	mov rax,[r9+\
+		NM_LISTVIEW.lParam]
+	test rax,rax
+	jz	.ret0
+
+	test [r9+\
+		NM_LISTVIEW.uNewState],\
+		LVIS_FOCUSED \
+		or LVIS_SELECTED
+	jz	.ret0
+
+	mov rcx,[rax+\
+		DEVTITEM.dir]
+	call mnu.set_dir
+	jmp	.ret0
+
+.lvw_dblclk:
+	mov edx,[r9+\
+		NMITEMACTIVATE.iItem]
+	inc edx
+	jz	.ret0
+
+	dec edx
+	xor eax,eax
+
+	sub rsp,\
+		sizea16.LVITEMW+\
+		FILE_BUFLEN
+
+	mov r9,rsp
+	mov [r9+\
+		LVITEMW.iItem],edx
+	mov [r9+\
+		LVITEMW.iSubItem],eax
+	mov rcx,[.devt.hLvw]
+	call lvw.get_param
+
+	mov rcx,[rsp+\
+		LVITEMW.lParam]
+	test ecx,ecx
+	jz	.ret0
+
+	mov rsi,rcx
+	mov rdx,[.devtitem.dir]
+	test edx,edx
+	jz .ret0
+	mov r8,[rdx+DIR.rdir]
+	test [rdx+DIR.type],\
+		DIR_HASREF
+	cmovz r8,rdx
+
+	mov rax,rsp
+	lea rcx,[r8+DIR.dir]
+	mov rdi,rcx
+
+	lea rdx,[rsi+\
+		sizeof.DEVTITEM]
+
+	push 0
+	push rdx
+	push uzSlash
+	push rcx
+	;---	push uzStart
+	push rax
+	push 0
+	call art.catstrw
+
+	mov rcx,rsp
+	;--- lea rcx,[rsp+16]
+	call art.is_file
+	jz .ret0
+
+	;--- TODO: to be changed after having
+  ;--- dialog of properties setting on item
+	;--- ok using cmd /C pat+file and
+	;--- SW_SHOWNORMAL by spawning consoles
+	;--- while SW_HIDE for other file,etc
+	
+	;---	mov r8,rdi
+	;---	mov rdx,rsp
+	;---	xor ecx,ecx
+	;---	call wspace.spawn
+
+	mov r11,\
+		SW_SHOWDEFAULT
+	mov r10,rdi
+	xor r9,r9
+	mov r8,rsp
+	xor edx,edx
+	mov rcx,[hMain]
+	call apiw.shexec
+	jmp	.ret0
+
+.wm_command:
+	mov rbx,[pDevT]
+	cmp r9,[.devt.hCbx]
+	jz	.cbx_command
+	cmp r9,[.devt.hTlb]
+	jz	.tlb_command
+	;@break
+	jmp	.ret0
+
+.tlb_command:
+	xor r9,r9
+	and r8,0FFFFh
+	mov edx,WM_COMMAND
+	mov rcx,[hMain]
+	call apiw.sms
+	jmp	.ret0
+
+.cbx_command:
+	shr r8,16
+	cmp r8w,\
+		CBN_SELCHANGE
+	jnz	.ret0
+
+	mov rcx,r9
+	call cbex.get_cursel
+	mov ecx,eax
+	inc eax
+	jz	.ret0
+	call .viewgroup
+	jmp	.ret0
+
+.wm_destroy:
+	call .get_data
+	jz	.ret0
+
+	;--- write
+	call .write
+
+	;--- destroy ----
+	mov rcx,rbx
+	call .discard
+	jmp	.ret0
+
+
+.wm_poschged:
+	push r12
+	push r13
+	push r14
+	push r15
+
+	mov rbx,[pDevT]
+	sub rsp,\
+		sizeof.RECT
+
+	mov rdx,rsp	
+	mov rcx,[.devt.hTlb]
+	call apiw.get_winrect
+	mov r12d,[rsp+RECT.bottom]
+	sub r12d,[rsp+RECT.top]	;--- toolbar cy
+	
+	mov rdx,rsp
+	mov rcx,[.devt.hCbx]
+	call apiw.get_winrect
+	mov r13d,[rsp+RECT.bottom]
+	sub r13d,[rsp+RECT.top]	;--- cbx cy
+
+	mov rdx,rsp
 	mov rcx,[.hwnd]
-	call apiw.enddlg
+	call apiw.get_clirect
+
+	mov r14d,[rsp+RECT.right]
+	sub r14d,[rsp+RECT.left]
+
+	mov rax,SWP_NOZORDER or\
+		SWP_NOMOVE
+	mov r9d,[rsp+RECT.top]
+	mov r8d,[rsp+RECT.left]
+	mov rdx,HWND_TOP
+	mov rcx,[.devt.hTlb]
+	call apiw.set_wpos
+
+	mov rax,SWP_NOZORDER
+	mov r11,r13
+	mov r10,r14
+	mov r9,r12
+	mov r8d,[rsp+RECT.left]
+	mov rdx,HWND_TOP
+	mov rcx,[.devt.hCbx]
+	call apiw.set_wpos
+
+	mov eax,SWP_NOZORDER ;or \
+;---		SWP_NOSENDCHANGING or \
+;---		SWP_NOCOPYBITS
+
+	mov r9,r12
+	add r9,r13
+	mov r11d,[rsp+RECT.bottom]
+	sub r11,r9
+	sub r11,CY_GAP*2
+	mov r10,r14
+	add r9,CY_GAP
+	mov r8d,[rsp+RECT.left]
+	mov rdx,HWND_TOP
+	mov rcx,[.devt.hLvw]
+	call apiw.set_wpos	
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	jmp	.ret0
+
+.wm_initd:
+	mov rbx,r9
+	mov [.devt.hwnd],rcx
+	mov r8,rbx
+	call apiw.set_wldata
+	mov [.devt.id],DEVT_DLG
+
+	mov rdx,DEVT_CBX
+	mov rcx,[.hwnd]
+	call apiw.get_dlgitem
+	mov [.devt.hCbx],rax
+
+	mov rdx,DEVT_LVW
+	mov rcx,[.hwnd]
+	call apiw.get_dlgitem
+	mov [.devt.hLvw],rax
+
+	mov rsi,[pConf]
+	mov r9d,\
+		[rsi+CONFIG.devt.bkcol]
+	mov rcx,[.devt.hLvw]
+	call lvw.set_bkcol
+
+	mov r9d,\
+		[rsi+CONFIG.devt.bkcol]
+	mov rcx,[.devt.hLvw]
+	call lvw.set_txtbkcol
+
+	;-------------------------
+	mov r9,[hlaSysList]
+	mov r8,LVSIL_NORMAL
+	mov rcx,[.devt.hLvw]
+	call lvw.set_iml
+
+	mov r8,LV_VIEW_ICON
+	mov rcx,[.devt.hLvw]
+	call lvw.set_view
+
+	;-------------------------
+	mov rdx,DEVT_TLB
+	mov rcx,[.hwnd]
+	call apiw.get_dlgitem
+	mov [.devt.hTlb],rax
+
+	mov r9,[hBmpIml]
+	xor r8,r8
+	mov rcx,rax
+	call tlb.set_iml
+
+	;--- in RAX iButton
+  ;--- in RDX iBitmap
+	;--- in R8 idCommand
+	;--- in R9H	fsState
+	;--- in R9L fsStyle
+	;--- in R10 dwData
+	;--- in R11 iString
+
+	push 0	;--- terminate
+
+	push 0
+	push MI_DEVT_REMG
+	push 0
+	push MI_DEVT_ADDG
+	push 12
+	push MI_DEVT_REM
+	push 10
+	mov r8,MI_DEVT_ADD
+	or edi,-1
+
+.wm_initdT:
+	inc edi
+	pop rdx
+	mov r9,TBSTATE_ENABLED	
+	shl r9,8
+	or r9l,TBSTYLE_BUTTON
+	xor r10,r10
+	xor r11,r11
+	;mov r11,uzDefault
+	mov eax,edi
+	mov rcx,[.devt.hTlb]
+	call tlb.ins_but
+	pop r8
+	test r8,r8
+	jnz	.wm_initdT
+
+	;--- in RCX hTip
+	;--- in RDX parent container of the tool
+	;--- in R8 hTool
+	;--- in R9 text
+	mov r9,\
+		LPSTR_TEXTCALLBACK
+	mov r8,[.devt.hTlb]
+	mov rdx,[.hwnd]
+	mov rcx,[hTip]
+	call tip.add
+
+	sub rsp,\
+		FILE_BUFLEN
+
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_MSG_TADDG
+	call [lang.get_uz]
+
+	mov rcx,[.devt.hCbx]
+	call cbex.get_edit
+
+	mov r9,rsp
+	mov r8,rax
+	mov rdx,[.hwnd]
+	mov rcx,[hTip]
+	call tip.add
+
+	mov rcx,rbx
+	call .load
+	test eax,eax
+	jz	.ret1
+	mov rsi,rax
+
+.wm_initdA:
+	push [rsi+\
+		DEVTITEM.next]
+
+	;--- in RCX hCb
+	;--- in RDX string
+	;--- in R8 imgindex
+	;--- in R9 param
+	;--- in R10 indent r10b,index overlay rest R10)
+	;--- in R11 selimage
+	
+	xor r11,r11
+	xor r10,r10
+	mov r9,rsi
+	xor r8,r8
+	lea rdx,[rsi+\
+		sizeof.DEVTITEM]
+	mov rcx,[.devt.hCbx]
+	call cbex.ins_item
+	pop rsi
+	test rsi,rsi
+	jnz	.wm_initdA
+
+	xor ecx,ecx
+	call .viewgroup
+
 	jmp	.ret1
 
 .ret1:				;message processed
@@ -177,34 +541,469 @@ devtool:
 	@wepi
 
 
-.discard:
-	xor ecx,ecx
+	;ü------------------------------------------ö
+	;|     .viewgroup                           |
+	;#------------------------------------------ä
+.viewgroup:
+	;--- in RCX idx
+	;--- ret RAX 0,item
+	push rbx
+	push rsi
+	push r12
+
+	mov r12,rcx
+	mov rbx,[pDevT]
+	mov rcx,[.devt.hLvw]
+	call lvw.del_all
+
+	mov rdx,r12
+	mov rcx,[.devt.hCbx]
+	call cbex.get_param
+	test edx,edx
+	jz	.viewgroupE
+
+	mov rax,[rdx+\
+		DEVTITEM.item]
+	test eax,eax
+	jz	.viewgroupF
+	mov rsi,rax
+
+.viewgroupA:
+	push [.devtitem.next]
+	or r8,-1
+	mov rcx,[.devt.hLvw]
+	mov rdx,rsi
+	call .ins_item
+
+	pop rsi
+	test esi,esi
+	jnz	.viewgroupA
+
+.viewgroupF:
+	mov r8,r12
+	mov rcx,[.devt.hCbx]
+	call cbex.sel_item
+
+.viewgroupE:
+	pop r12
+	pop rsi
+	pop rbx
+	ret 0
+
+	;#---------------------------------------------------ö
+	;|                   PROP.INS_ITEM                   |
+	;ö---------------------------------------------------ü
+
+.ins_item:
+	;--- in RCX hLvw
+	;--- in RDX DEVTITEM
+	;--- in R8 after index,-1 at end
+	push rbx
+	push rsi
+	push rdi
+	push r12
+
+	sub rsp,\
+		sizeof.SHFILEINFOW+\
+		FILE_BUFLEN+\
+		sizeof.LVITEMW
+
+	mov r12,r8
+	mov rbx,rcx
+	mov rdi,rsp
+	mov rsi,rdx
+
+	;--- compose path+filename
+	mov rdx,[.devtitem.dir]
+	test edx,edx
+	jz .ins_itemE
+	mov r8,[rdx+DIR.rdir]
+	test [rdx+DIR.type],\
+		DIR_HASREF
+	cmovz r8,rdx
+
+	lea rax,[r8+DIR.dir]
+	lea rdx,[rsi+\
+		sizeof.DEVTITEM]
+	lea rcx,[rdi+\
+		sizeof.SHFILEINFOW]
+
+	push 0
+	push rdx
+	push uzSlash
+	push rax
+	push rcx
+	push 0
+	call art.catstrw
+
+	;--- check existence -----
+	lea rcx,[rdi+\
+		sizeof.SHFILEINFOW]
+	call art.is_file
+	jz .ins_itemE
+
+	;--- get large icon of it ----
+	mov r10,\
+		SHGFI_SYSICONINDEX or \
+		SHGFI_USEFILEATTRIBUTES
+
+	mov r9,\
+		sizeof.SHFILEINFOW
+
+	mov r8,rdi
+	xor edx,edx
+	lea rcx,[rdi+\
+		sizeof.SHFILEINFOW]
+	call apiw.sfinfo
+
+	inc r12
+	jnz	.ins_itemA
+	;--- count items ------
+	mov rcx,rbx
+	call lvw.get_count
+	mov r12,rax
+
+.ins_itemA:
+	lea r9,[rsp+\
+		sizeof.SHFILEINFOW+\
+		FILE_BUFLEN]
+
+	mov [r9+\
+		LVITEMW.iItem],r12d
+
+	mov ecx,[rsp+\
+		SHFILEINFOW.iIcon]
+
+	mov [r9+\
+		LVITEMW.iImage],ecx
+
 	xor eax,eax
-	xchg rcx,[pTopDevT]
-	mov [pTopDevT.dsize],eax
-	mov [pTopDevT.items],eax
+	mov [r9+\
+		LVITEMW.iSubItem],eax
+
+	mov [r9+\
+		LVITEMW.lParam],rsi
+
+	lea rdx,[rsi+\
+		sizeof.DEVTITEM]
+
+	mov [r9+\
+		LVITEMW.pszText],rdx
+
+	mov [r9+\
+		LVITEMW.mask],\
+		LVIF_TEXT	or \
+		LVIF_IMAGE or \
+		LVIF_PARAM
+
+	mov rcx,rbx
+	call lvw.ins_item
+
+.ins_itemE:
+	add rsp,\
+		sizeof.SHFILEINFOW+\
+		FILE_BUFLEN+\
+		sizeof.LVITEMW
+	pop r12
+	pop rdi
+	pop rsi
+	pop rbx
+	ret 0
+
+	;ü------------------------------------------ö
+	;|     .ADDGROUP                            |
+	;#------------------------------------------ä
+
+.addgroup:
+	;--- in RCX 0,name
+	push rbx
+	push rdi
+	push rsi
+	push r12
+
+	mov rdi,rcx
+	mov rbx,[pDevT]
+	sub rsp,\
+		sizeof.COMBOBOXEXITEMW
+
+	mov rcx,[.devt.hCbx]
+	call cbex.get_cursel
+	mov edx,eax
+	mov r12,rax
+	inc eax
+	jz	.addgroupA
+
+	mov rcx,[.devt.hCbx]
+	call cbex.get_param
+	xor eax,eax
+	test edx,edx
+	jz	.addgroupE
+
+	mov rsi,rdx
+
+.addgroupA:
+	xor r8,r8
+	xor edx,edx
+	mov rcx,rdi
+	call .new
+	test eax,eax
+	jz	.addgroupE
+
+	lea rdi,\
+		[rax+sizeof.DEVTITEM]
+
+	mov r9,rsp
+	xor r8,r8
+
+	push rax
+	inc r12
+	jnz	.addgroupB
+	mov [.devt.pGrp],rax
+	jmp	.addgroupC
+
+.addgroupB:
+	mov rcx,[.devtitem.next]
+	mov [rax+DEVTITEM.next],rcx
+	mov [.devtitem.next],rax
+
+.addgroupC:
+	mov [r9+\
+		COMBOBOXEXITEMW.mask],\
+		CBEIF_TEXT or \
+		CBEIF_LPARAM
+
+	mov [r9+\
+		COMBOBOXEXITEMW.pszText],rdi
+	mov [r9+\
+		COMBOBOXEXITEMW.lParam],rax
+	mov [r9+\
+		COMBOBOXEXITEMW.iItem],r12
+
+	mov rdx,\
+		CBEM_INSERTITEMW
+	mov rcx,\
+		[.devt.hCbx]
+	call apiw.sms
+
+	mov rcx,r12
+	call .viewgroup
+	pop rax
+
+.addgroupE:
+	add rsp,\
+		sizeof.COMBOBOXEXITEMW
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	ret 0
+
+	;ü------------------------------------------ö
+	;|     .REMGROUP                            |
+	;#------------------------------------------ä
+.remgroup:
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	push r12
+	mov rbp,rsp
+
+	mov rbx,[pDevT]
+	and rsp,-16
+
+	sub rsp,\
+		FILE_BUFLEN*2
+
+	mov rcx,\
+		[.devt.hCbx]
+	call cbex.get_cursel
+	mov r12,rax
+
+	mov edx,eax
+	mov rcx,[.devt.hCbx]
+	call cbex.get_param
+
+	xor eax,eax
+	test edx,edx
+	jz	.remgroupE
+	mov rsi,rdx
+
+	mov r8,rsp
+	mov edx,U16
+	mov ecx,UZ_MSG_U_TGREM
+	call [lang.get_uz]
+
+	mov rdi,rax
+	add rdi,rsp
+	@nearest 16,rdi
+
+ 	lea r8,[rsi+\
+		sizeof.DEVTITEM]
+	mov rdx,rsp
+	mov rcx,rdi
+	sub rsp,20h
+	call [swprintf]
+	add rsp,20h
+
+	mov r8,uzTitle
+	mov rdx,rdi
+	mov rcx,[hMain]
+	call apiw.msg_yn
+	cmp eax,IDNO
+	jz .remgroupE
+
+;@break
+	mov rdi,r12
+	test r12,r12
+	jz	.remgroupB
+
+	xor eax,eax
+	mov rcx,[.devt.pGrp]
 	test ecx,ecx
-	jnz	.discardA
+	jz .remgroupE
+
+.remgroupA1:
+	mov rdx,[rcx+\
+		DEVTITEM.next]
+	cmp rdx,rsi
+	jz	.remgroupA
+	inc eax
+	mov rcx,rdx
+	jmp	.remgroupA1
+
+.remgroupA:
+	mov r8,[.devtitem.next]
+	mov [rcx+DEVTITEM.next],r8
+	mov rdi,rax
+	test rdx,rdx
+	jnz	.remgroupF
+	dec rdi
+	dec r12
+	jmp	.remgroupF
+
+.remgroupB:
+	;--- our is the 1st
+	mov rax,[.devtitem.next]
+	mov [.devt.pGrp],rax
+	test rax,rax
+	jnz	.remgroupF
+	dec rdi
+
+.remgroupF:
+	mov rcx,[.devtitem.item]
+
+.remgroupF2:
+	test rcx,rcx
+	jz	.remgroupF1
+	push [rcx+\
+		DEVTITEM.next]
+	call art.a16free
+	pop rcx
+	jmp	.remgroupF2
+
+.remgroupF1:
+	mov rcx,[.devt.hLvw]
+	call lvw.del_all
+
+	mov r8,r12
+	mov rcx,[.devt.hCbx]
+	call cbex.del_item	
+
+	mov rcx,rsi
+	call art.a16free
+
+	test edi,edi
+	js .remgroupE
+
+	mov r8,rdi
+	mov rcx,[.devt.hCbx]
+	call cbex.sel_item
+
+	mov r9,[.devt.hCbx]
+	mov r8,CBN_SELCHANGE
+	shl r8,16
+	mov edx,WM_COMMAND
+	mov rcx,[.devt.hwnd]
+	call apiw.sms
+
+
+.remgroupE:
+	mov rsp,rbp
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
 	ret 0
 
-.discardA:	
-	call [top64.free]
+	;ü------------------------------------------ö
+	;|     .DISCARD    DEVTOOL                  |
+	;#------------------------------------------ä
+
+.discard:
+	;--- in RCX devt
+	push rbx
+	mov rbx,rcx
+
+	xor eax,eax
+	mov rcx,[.devt.pGrp]
+	test rcx,rcx
+	jnz .discardG
+	pop rbx
 	ret 0
 
-.reload:
-	mov rcx,.loadD
-	jmp	.loadR
+.discardG:
+	mov rdx,[rcx+\
+		DEVTITEM.item]
+	test rdx,rdx
+	jz	.discardG1
+
+	push rcx
+	mov rcx,rdx
+
+.discardI:
+	push [rcx+\
+		DEVTITEM.next]
+	call art.a16free
+	pop rcx
+	test ecx,ecx
+	jnz	.discardI
+	pop rcx
+	
+.discardG1:
+	push [rcx+\
+		DEVTITEM.next]
+
+.discardG2:
+	call art.a16free
+	pop rcx
+	test ecx,ecx
+	jnz	.discardG
+
+	pop rbx
+	ret 0
+
+	;ü------------------------------------------ö
+	;|     .LOAD   DEVTOOL                      |
+	;#------------------------------------------ä
 
 .load:
-	mov rcx,.loadL
+	;--- in RCX devt
+	;--- ret RAX pGrp
+	push rbp
+	push rbx
+	push rsi
+	push r12
 
-.loadR:
-	sub rsp,128+\
-	 FILE_BUFLEN*2
-	
+	mov rbp,rsp
+	mov rbx,rcx
+	sub rsp,\
+		FILE_BUFLEN
+	xor r12,r12
+
 	mov rax,rsp
 	xor edx,edx
-	push rcx
 
 	;--- check load for [config\devtool.utf8]
 	push rdx
@@ -215,90 +1014,875 @@ devtool:
 	push rax
 	push rdx
 	call art.catstrw
-	ret 0
 
-.loadL:
-	;--- check file exists 
+.loadA:
+	;--- check file exists
 	mov rcx,rsp
 	call art.is_file
 	jz .loadD
-	
-.loadA1:
+
 	mov rcx,rsp
 	call [top64.parse]
 	test rax,rax
-	jnz	.loadF
+	jz	.loadD
+	mov rsi,rax
 
-	;--- file may contain work. preserve it by
-	;--- copying it to tmp\XXXXXXXX.devtool.utf8
-	;--- where XXXXXXXX is a ftime
-
-	call art.tstamp
-	call art.stamp2ft
-
-	lea rdx,[rsp+\
-		FILE_BUFLEN*2]
-	mov rcx,rax
-	call art.qword2a
-
-	add rcx,rdx
-	lea rdx,[rsp+64+\
-		FILE_BUFLEN*2]
-	call utf8.to16
-	
-	lea rdx,[rsp+\
-		FILE_BUFLEN]
-	xor eax,eax
-	lea rcx,[rsp+64+\
-		FILE_BUFLEN*2]
-
-	push rax
-	push uzUtf8Ext
-	push uzDevTName
-	push uzDot
-	push rcx
-	push uzSlash
-	push uzTmpName
-	push rdx
-	push rax
-	call art.catstrw
-
-	xor r8,r8
-	lea rdx,[rsp+\
-		FILE_BUFLEN]
-	mov rcx,rsp
-	call apiw.copyf
-
-.loadD:
-	;--- create a default file
-	mov rcx,rsp
-	call .write
-
-	mov rax,[pTopDevT]
-	test rax,rax
-	jz	.loadA1
-
-	call .discard
-	jmp	.loadA1
-
-.loadF:
 	;--- RET RCX datasize
 	;--- RET RDX numitems
-
-	mov [pTopDevT],rax
-	mov [pTopDevT.dsize],ecx
-	mov [pTopDevT.items],edx
 	test edx,edx
-	jz	.loadD
+	jz	.loadD1
+
+	mov rcx,rax
+	call .read
+	test eax,eax
+	jz	.loadD1
+	mov r12,rax
+
+.loadD1:
+	mov rcx,rsi
+	call [top64.free]
+	test r12,r12
+	jnz	.loadE
+
+.loadD:
+	xor r8,r8
+	xor edx,edx
+	xor ecx,ecx
+	call .new
+	test rax,rax
+	jz	.loadE
+	mov r12,rax
 
 .loadE:
-	add rsp,128+\
-		FILE_BUFLEN*2
+	mov [.devt.pGrp],r12
+	mov rax,r12
+	mov rsp,rbp
+	pop r12
+	pop rsi
+	pop rbx
+	pop rbp
+	ret 0
+
+	;ü------------------------------------------ö
+	;|     .READ   DEVTOOL                      |
+	;#------------------------------------------ä
+.read:
+	;--- in RCX top
+	;--- ret RAX first group
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	push r12
+	push r13
+	push r14
+	push r15
+	mov rbp,rsp
+
+	sub rsp,\
+		FILE_BUFLEN*2+10h
+	mov r15,rsp
+	mov rbx,rcx
+	mov rsi,rcx
+	xor r12,r12
+	xor r13,r13
+	push 0
+
+.readA:
+	test [rsi+\
+		TITEM.type],TOBJECT
+	jz	.readN
+
+	mov eax,[rsi+\
+		TITEM.attrib]
+	add rax,rbx
+	cmp rax,rbx
+	jz	.readN
+
+	cmp [rax+\
+		TITEM.type],\
+		TQUOTED
+	jnz	.readN
+
+	lea rcx,[rax+\
+		TITEM.value]
+
+	movzx edx,[rax+\
+		TITEM.len]
+	xor eax,eax
+	dec edx
+	jl	.readN
+	inc edx
+
+	mov rdx,r15
+	call utf8.to16
+
+	xor r8,r8
+	xor edx,edx
+	mov rcx,r15
+	call .new
+
+	test eax,eax
+	jz	.readF		;--- preserve what is done ok
+
+	push rax
+	xchg rax,r12
+	test rax,rax
+	jz .readA2
+	mov [rax+\
+		DEVTITEM.next],r12
+
+.readA2:
+	xor r13,r13	;--- prev item
+	mov [r12+\
+		DEVTITEM.next],r13
+	mov [r12+\
+		DEVTITEM.item],r13
+
+.readI:
+	;--- read items -----------
+	mov r14d,[rsi+\
+		TITEM.child]
+	test r14,r14
+	jz .readN
+	add r14,rbx
+
+.readI1:
+	xor eax,eax
+	mov [r15],rax
+	mov [r15+8],rax
+
+	test [r14+\
+		TITEM.type],TLABEL
+	jz	.readNI
+
+	mov edi,[r14+\
+		TITEM.attrib]
+	test edi,edi
+	jz .readNI
+	add rdi,rbx
+
+	xor eax,eax
+	cmp [rdi+\
+		TITEM.type],TQUOTED
+	jnz	.readNI
+
+	movzx ecx,[rdi+\
+		TITEM.len]
+	dec ecx
+	jl	.readNI
+	inc ecx
+
+	;--- store cmd ---------
+	lea rdx,[r15+16]
+	lea rcx,[rdi+\
+		TITEM.value]
+	call utf8.to16
+	
+	;--- check cmd flags -------
+	xor eax,eax
+	mov edi,[rdi+\
+		TITEM.attrib]
+	test edi,edi
+	jz .readI3
+	add rdi,rbx
+
+	cmp [rdi+\
+		TITEM.type],TNUMBER
+	jnz	.readI3
+
+	mov ecx,[rdi+\
+		TITEM.lo_dword]
+	and [r15],rcx
+	
+	;--- check param -------
+	mov edi,[rdi+\
+		TITEM.attrib]
+	xor eax,eax
+	test edi,edi
+	jz .readI3
+	add rdi,rbx
+
+	cmp [rdi+\
+		TITEM.type],TQUOTED
+	jnz	.readI3
+	
+	movzx ecx,[rdi+\
+		TITEM.len]
+	dec ecx
+	jl	.readI3
+	inc ecx
+	
+	;--- store param ---------
+	lea rdx,[r15+\
+		16+FILE_BUFLEN]
+	lea rcx,[rdi+\
+		TITEM.value]
+	push rdx
+	call utf8.to16
+	pop qword[r15+8]
+
+.readI3:
+	mov r9,SW_SHOWDEFAULT
+	mov r8,[r15]
+	test r8,r8
+	cmovz r8,r9
+
+	mov rdx,[r15+8]
+	lea rcx,[r15+16]
+	call .new
+	test rax,rax
+	jz .readNI	;<--- continue to next valid item
+
+	mov [rax+\
+		DEVTITEM.group],r12
+	
+	test r13,r13
+	jnz	@f
+	mov [r12+\
+		DEVTITEM.item],rax
+	mov r13,rax
+	jmp	.readNI
+@@:
+	mov [r13+\
+		DEVTITEM.next],rax
+	mov r13,rax
+
+.readNI:
+	mov r14d,[r14+\
+		TITEM.next]
+	add r14,rbx
+	cmp r14,rbx
+	jnz	.readI1
+
+.readN:
+	mov esi,[rsi+\
+		TITEM.next]
+	add rsi,rbx
+	cmp rsi,rbx
+	jnz	.readA
+
+.readF:	
+	mov rax,[rsp]
+	test rax,rax
+	lea rdx,[rsp+8]
+	cmovnz r12,rax
+	mov rsp,rdx
+	jnz	.readF
+	mov rax,r12
+
+.readE:
+	mov rsp,rbp
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
+
+	;ü------------------------------------------ö
+	;|     .NEW    DEVTOOL                      |
+	;#------------------------------------------ä
+.new:
+	;--- in RCX cmd
+	;--- in RDX para
+	;--- in R8 flags
+	;--- RET RAX DEVTITEM
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+
+	mov rbp,rsp
+	mov rbx,r8
+	mov rsi,rcx
+	mov rdi,rdx
+	
+	mov eax,\
+		sizeof.DEVTITEM+\
+		FILE_BUFLEN*3
+	sub rsp,rax
+
+	mov rdx,rsp
+	mov rcx,rax
+	call art.zeromem
+
+	test ebx,ebx
+	jz	.newD
+
+.newI:
+	;--- work on a cmd ----
+	mov [rsp+\
+		DEVTITEM.flags],ebx
+
+	mov r8,\
+		MAX_UTF16_FILE_CPTS
+	lea rdx,[rsp+\
+		sizeof.DEVTITEM+\
+		FILE_BUFLEN*2]
+	mov rcx,rsi
+	xor ebx,ebx
+	call apiw.exp_env
+	test eax,eax
+	jz	.newE
+
+	cmp eax,\
+		MAX_UTF16_FILE_CPTS
+	jae .newE
+
+	lea rcx,[rsp+\
+		sizeof.DEVTITEM+\
+		FILE_BUFLEN*2]
+	call art.is_file
+	jz	.newE
+
+	mov rcx,rsi
+	call art.get_fname
+
+	;--- RET EAX 0,numchars
+	;--- RET ECX total len
+	;--- RET EDX pname "file.asm"
+	;--- RET R8 string
+
+	xor r8,r8
+	test eax,eax 	;--- err get_fname
+	jz .newE
+	
+	cmp eax,ecx
+	jz	.newE		;--- nopath
+	
+	push rdx
+	push qword[rdx-8]
+	mov rcx,rsi
+	mov [rdx-2],r8w
+
+	xor r8,r8
+	xor edx,edx
+	call wspace.set_dir
+	pop r8
+	test eax,eax
+	pop rcx
+	mov [rcx-8],r8
+	jz .newE
+	
+	mov [rsp+\
+		DEVTITEM.dir],rax
+
+	lea rdx,[rsp+\
+		sizeof.DEVTITEM]
+	call utf16.copyz
+	add eax,4
+	mov [rsp+\
+		DEVTITEM.oparam],eax
+
+	inc eax
+	@nearest 8,eax
+
+	add eax,\
+		sizeof.DEVTITEM
+	mov ecx,eax
+	mov ebx,eax
+
+	test edi,edi
+	jz	.newA
+
+	mov eax,[rsp+\
+		DEVTITEM.oparam]
+	mov rcx,rdi
+	lea rdx,[rax+rsp+\
+		sizeof.DEVTITEM]
+	call utf16.copyz	
+	add ebx,eax
+	add ebx,4
+	mov ecx,ebx
+	jmp	.newA
+
+.newD:
+	test rsi,rsi
+	jnz	.newG
+
+	;--- default group
+	lea r8,[rsp+\
+		sizeof.DEVTITEM]
+	mov edx,U16
+	mov ecx,UZ_TOOLGEN
+	call [lang.get_uz]
+	add eax,4
+	mov [rsp+\
+		DEVTITEM.oparam],eax
+	add eax,\
+		sizeof.DEVTITEM+4
+	inc eax
+	@nearest 8,eax
+	mov ecx,eax
+	mov ebx,eax
+	jmp	.newA
+	
+.newG:
+	lea rdx,[rsp+\
+		sizeof.DEVTITEM]
+	mov rcx,rsi
+	call utf16.copyz
+	add eax,4
+	mov [rsp+\
+		DEVTITEM.oparam],eax
+	add eax,\
+		sizeof.DEVTITEM
+	inc eax
+	@nearest 8,eax
+	mov ecx,eax
+	mov ebx,eax
+
+.newA:
+	call art.a16malloc
+	xchg rax,rbx
+	test ebx,ebx
+	jz	.newE
+
+	mov rdx,rbx
+	mov rsi,rsp
+	mov rdi,rbx
+	mov ecx,eax
+	shr ecx,3
+	rep movsq
+	mov rbx,rdx
+
+.newE:
+	mov rax,rbx
+	mov rsp,rbp
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
 	ret 0
 
 
+	;ü------------------------------------------ö
+	;|     .ADDTOOL                             |
+	;#------------------------------------------ä
+
+.addtool:
+	push rbp
+	push rbx
+	push rdi
+	push rsi
+	push r12
+	push r13
+	push r14
+	push r15
+
+	sub rsp,\
+		sizeof.LVITEMW+\
+		FILE_BUFLEN
+
+	;--- check against no groups
+	xor r14,r14	;--- selected DEVTITEM
+	xor r15,r15	;--- selected GROUP
+	xor ebp,ebp	;--- group index
+
+	mov rbx,[pDevT]
+	mov rax,[.devt.pGrp]
+	test eax,eax
+	jz .addtoolE
+
+	;--- force update when just added group
+	mov rcx,[.devt.hCbx]
+	call apiw.set_focus
+
+	mov rcx,[.devt.hCbx]
+	call cbex.get_cursel
+	inc eax
+	jz .addtoolE
+	dec eax
+	mov rbp,rax
+
+	mov rdx,rax
+	mov rcx,[.devt.hCbx]
+	call cbex.get_param
+	test edx,edx
+	jz .addtoolE
+	mov r15,rdx
+
+	;--- check if toolitem selected
+	mov r9,\
+		LVNI_SELECTED
+	or r8,-1
+	mov rcx,[.devt.hLvw]
+	call lvw.get_next
+	mov r12,rax
+
+	mov rdx,[toolDir]
+	lea r13,[rdx+DIR.dir]
+	inc rax
+	jnz	.addtoolA
+
+	;--- get dir from current menu
+	call mnu.get_dir
+	mov r13,rax
+	jmp	.addtoolA1
+
+.addtoolA:
+	xor r10,r10
+	mov r8,r12
+	mov r9,rsp
+	mov [r9+\
+		LVITEMW.iItem],r12d
+	mov [r9+\
+		LVITEMW.iSubItem],r10d
+	mov rcx,[.devt.hLvw]
+	call lvw.get_param
+
+	mov rax,[rsp+\
+		LVITEMW.lParam]
+	test rax,rax
+	jz	.addtoolE
+	mov r14,rax
+
+	mov r13,\
+		[rax+DEVTITEM.dir]
+	
+.addtoolA1:
+	;--- get expanded dir -----
+	mov rax,r13
+	mov rdx,[r13+DIR.rdir]
+	test [rax+DIR.type],\
+		DIR_HASREF
+	cmovnz r13,rdx
+
+	lea r8,[rsp+\
+		sizeof.LVITEMW]
+	mov edx,U16
+	mov ecx,UZ_TOOLPICK
+	call [lang.get_uz]
+	
+	;--- in RCX title
+	;--- in RDX filespec
+	;--- in R8 flags
+	;--- in R9 startdir
+
+	lea r9,[r13+DIR.dir]
+	mov r8,0\
+		or FOS_NODEREFERENCELINKS\
+		or FOS_ALLNONSTORAGEITEMS\
+		or FOS_PATHMUSTEXIST
+	xor edx,edx
+	lea rcx,[rsp+\
+		sizeof.LVITEMW]
+	call [dlg.open]
+
+	test eax,eax
+	jz	.addtoolE
+	mov rdi,rax
+
+	;--- in RCX cmd
+	;--- in RDX para
+	;--- in R8 flags
+	mov r8,\
+		SW_SHOWNORMAL
+	xor edx,edx
+	mov rcx,rdi
+	call .new
+	test eax,eax
+	jz .addtoolF
+	mov rsi,rax
+
+	mov r8,r12
+	mov rdx,rax
+	mov rcx,[.devt.hLvw]
+	call .ins_item
+
+	mov [.devtitem.group],r15
+
+	mov rcx,[r15+\
+		DEVTITEM.item]
+	test rcx,rcx
+	jnz .addtoolG2
+	mov [r15+\
+		DEVTITEM.item],rsi
+	jmp	.addtoolF
+
+.addtoolG2:
+	inc r12
+	jz	.addtoolG
+	mov rax,[r14+\
+		DEVTITEM.next]
+	mov [.devtitem.next],rax
+	mov [r14+\
+		DEVTITEM.next],rsi
+	jmp	.addtoolF
+
+
+.addtoolG:
+	test rcx,rcx
+	jnz	.addtoolG1
+	mov [rdx+\
+		DEVTITEM.next],rsi
+	jmp	.addtoolF
+
+.addtoolG1:
+	mov rdx,rcx
+	mov rcx,[rcx+\
+		DEVTITEM.next]
+	jmp	.addtoolG
+
+.addtoolF:
+	mov rcx,rdi
+	call apiw.co_taskmf
+
+	mov rcx,rbp
+	call .viewgroup
+
+
+.addtoolE:
+	add rsp,\
+		sizeof.LVITEMW+\
+		FILE_BUFLEN
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rsi
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
+
+	;ü------------------------------------------ö
+	;|     .REMTOOL                             |
+	;#------------------------------------------ä
+
+.remtool:
+	;--- check if toolitem selected
+	push rbx
+	push rsi
+	push r12
+
+	mov rbx,[pDevT]
+	sub rsp,\
+		sizeof.LVITEMW
+
+	mov r9,\
+		LVNI_SELECTED
+	or r8,-1
+	mov rcx,[.devt.hLvw]
+	call lvw.get_next
+	inc rax
+	jz	.remtoolE
+	dec rax
+	mov r12,rax
+
+	xor r10,r10
+	mov r8,rax
+	mov r9,rsp
+	mov [r9+\
+		LVITEMW.iItem],eax
+	mov [r9+\
+		LVITEMW.iSubItem],r10d
+	mov rcx,[.devt.hLvw]
+	call lvw.get_param
+
+	mov rax,[rsp+\
+		LVITEMW.lParam]
+	test rax,rax
+	jz	.remtoolE
+	mov rsi,rax
+
+	;--- get previous item listing from first
+	mov rdx,[.devtitem.group]
+	test edx,edx
+	jz	.remtoolE 
+
+	mov rcx,[rdx+\
+		DEVTITEM.item]
+	cmp rcx,rsi
+	jnz	.remtoolA
+
+	;--- our is first
+	mov rax,[rcx+\
+		DEVTITEM.next]
+	mov [rdx+\
+		DEVTITEM.item],rax
+	jmp	.remtoolF
+
+.remtoolA:
+	mov rdx,[rcx+\
+		DEVTITEM.next]
+	cmp rsi,rdx
+	jz	.remtoolA1
+	test edx,edx
+	jz	.remtoolE	;--- err pointers
+	mov rcx,rdx
+	jmp	.remtoolA
+
+.remtoolA1:
+	mov rax,\
+		[.devtitem.next]
+	mov [rcx+\
+		DEVTITEM.next],rax
+	
+.remtoolF:
+	mov r8,r12
+	mov rcx,[.devt.hLvw]
+	call lvw.del_item
+
+	mov rcx,rsi
+	call art.a16free
+
+.remtoolE:
+	add rsp,\
+		sizeof.LVITEMW
+	pop r12
+	pop rsi
+	pop rbx
+	ret 0
+
+
+;---.io_btn:
+;---	mov rsi,[pIo]
+;---	add rsi,IO_DEVTOOL
+;---	mov rbx,[pHu]
+;---	lea rdi,[.io.buf]
+
+;---	mov r9,rdi
+;---	mov r8,0\
+;---		or FOS_NODEREFERENCELINKS\
+;---		or FOS_ALLNONSTORAGEITEMS\
+;---		or FOS_PATHMUSTEXIST
+;---	mov rcx,rbx
+;---	call iodlg.set_browsedir
+
+;---	mov eax,[rdi]
+;---	test eax,eax
+;---	jz	.ret0
+
+;---	mov rcx,rdi
+;---	call art.is_file
+;---	jz	.ret0
+
+;---	mov rcx,rdi
+;---	call art.get_fname
+
+;---	;--- RET EAX 0,numchars
+;---	;--- RET ECX total len
+;---	;--- RET EDX pname "file.asm"
+;---	;--- RET R8 string
+
+;---	test eax,eax	;--- err get_fname
+;---	jz	.ret0
+
+;---	cmp eax,ecx
+;---	jz	.ret0		;--- nopath
+
+;---	mov r9,rdx
+;---	mov rcx,[rbx+HU.hEdi]
+;---	call win.set_text
+
+;---	jmp	.ret0
+
+;---.id_ok:
+;---.id_cancel:	
+;---	mov rcx,[.hwnd]
+;---	call iodlg.store_pos
+
+;---	mov rdx,[pIo]
+;---	add rdx,IO_DEVTOOL
+;---	mov rcx,[pHu]
+;---	call iodlg.store_lastdir
+
+;---	mov rdx,[.wparam]
+;---	mov rcx,[.hwnd]
+;---	call apiw.enddlg
+;---	jmp	.ret1
+
+;---.discard:
+;---	xor ecx,ecx
+;---	xor eax,eax
+;---	xchg rcx,[pTopDevT]
+;---	mov [pTopDevT.dsize],eax
+;---	mov [pTopDevT.items],eax
+;---	test ecx,ecx
+;---	jnz	.discardA
+;---	ret 0
+
+	;ü------------------------------------------ö
+	;|     .DISCARD    DEVTOOL                  |
+	;#------------------------------------------ä
+
+.items:
+	;--- in RCX devt
+	;--- ret RAX size
+	;--- ret RCX numitems
+	push rbx
+	push r12
+	push r13
+	mov rbx,rcx
+
+	xor r12,r12
+	xor r13,r13
+	xor eax,eax
+	mov rcx,[.devt.pGrp]
+	push 0
+
+.itemsA:
+	test rcx,rcx
+	jz .itemsB
+	push rcx
+	inc r13
+	mov eax,[rcx+\
+		DEVTITEM.oparam]
+	shl eax,1
+	add eax,16
+	@nearest 16,eax
+	add r12,rax
+	mov rcx,[rcx+\
+		DEVTITEM.next]
+	jmp .itemsA
+
+.itemsB:
+	pop rcx
+	test rcx,rcx
+	jz	.itemsE
+	mov rdx,[rcx+\
+		DEVTITEM.item]
+
+.itemsB1:
+	test rdx,rdx
+	jz	.itemsB
+	inc r13
+	mov eax,[rdx+\
+		DEVTITEM.oparam]
+	shl eax,1
+	mov r8,[rdx+\
+		DEVTITEM.dir]
+	movzx ecx,[r8+\
+		DIR.cpts]
+	@nearest 8,ecx
+	add eax,ecx
+	shl eax,1
+	add eax,16
+	@nearest 16,eax
+	add r12,rax
+	mov rdx,[rdx+\
+		DEVTITEM.next]
+	jmp .itemsB1
+	
+.itemsE:
+	mov rcx,r13
+	mov rax,r12
+	pop r13
+	pop r12
+	pop rbx
+	ret 0
+
+
+	;ü------------------------------------------ö
+	;|     .WRITE      DEVTOOL                  |
+	;#------------------------------------------ä
+
 .write:
-	;--- in RCX config\devtool.utf8
 	push rbp
 	push rbx
 	push rsi
@@ -306,19 +1890,28 @@ devtool:
 	push r12
 	push r13
 	mov rbp,rsp
+	and rsp,-16
 
-	mov r12,rcx
-	mov eax,[pTopDevT.items]
-	or  al,4
-	shl eax,4
-	@nearest 64,eax
-	add eax,1024
-	add eax,[pTopDevT.dsize]
-	@nearest 16,eax
+	mov rcx,[pDevT]
+	mov rbx,rcx
+	call .items
+	mov r12,rcx		;--- save numitems
 
+	add rax,1024	;--- common stub
+	add rax,\
+		FILE_BUFLEN	;--- space for formatting path+file etc
+	shl rcx,5			;--- _"(.:0123456789ABCDEFh
+	add rax,rcx
+	@nearest 16,rax
 	@frame rax
-	mov rdi,rsp
 
+	lea rdi,[rax+\
+		FILE_BUFLEN]
+
+	mov rdx,rax
+	call art.zeromem
+
+	
 	mov al,09
 	stosb
 	;--- insert utf8 warning -------
@@ -350,10 +1943,10 @@ devtool:
 	@do_eol
 	@do_eol
 
-	mov eax,[pTopDevT.items]
-	test eax,eax
-	jnz	.writeA
-
+	mov rdx,[.devt.pGrp]
+	test r12,r12
+	jnz	.writeA4
+	
 	;--- insert General tools -------
 	mov eax,'	.:"'
 	stosd
@@ -372,220 +1965,116 @@ devtool:
 	mov al,")"
 	stosb
 	@do_eol
+	jmp	.writeF
 
 .writeA:
-	mov rbx,[pTopDevT]
-	xor eax,eax
-	mov rsi,rbx
-	test ebx,ebx
-	jz	.writeW
-
-	;--- write items and groups --------
-.writeG:
-	test [rsi+\
-		TITEM.type],TOBJECT
-	jnz	.writeG1
-
-.writeGN:
-	mov esi,[rsi+\
-		TITEM.next]
-	add rsi,rbx
-	cmp rsi,rbx
-	jnz	.writeG
-	jmp	.writeW
-
-.writeG1:
-	;--- output group ---
-	test [rsi+\
-		TITEM.type],\
-		TDELETED
-	jnz	.writeGN
-
-	mov r8d,[rsi+\
-		TITEM.attrib]
-	test r8,r8
-	jz	.writeGN
-
-	add r8,rbx
+	mov r13,rdx
+	mov r12,[r13+\
+		DEVTITEM.item]
 	mov eax,'	.:"'
 	stosd
 
-	push rsi
-	movzx ecx,[r8+\
-		TITEM.len]
-	lea rsi,[r8+\
-		TITEM.value]
-	rep movsb
-	pop rsi
+	lea rcx,\
+		[r13+sizeof.DEVTITEM]
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
 
 	mov ax,'"('
 	stosw
 	@do_eol
+	jmp	.writeA2
 
-	;--- check for carrier param for item 
-	;--- inside object CL=0 for it
+.writeA1:
+;---@break
+	;--- write item ------
+	mov al,09h
+	stosb
+	mov eax,'	.:"'
+	stosd
 
-	mov rcx,[rsi+\
-		TITEM.param]
-	and cl,1
-	test [rsi+\
-		TITEM.type],TPARAM
-	jz	.writeG3
-	test cl,cl
-	jnz	.writeG3
+	mov r8,[r12+\
+		DEVTITEM.dir]
+	lea rcx,\
+		[r8+DIR.dir]
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
+	mov al,"\"
+	stosb
+	lea rcx,\
+		[r12+sizeof.DEVTITEM]
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
+	mov ax,'",'
+	stosw
+	mov al,'0'
+	stosb
 
-.writeG4:	
-	call .writeC
+	;--- write flags -------
+	mov rdx,rsp
+	mov rsi,rsp
+	mov ecx,[r12+\
+		DEVTITEM.flags]
+	call art.qword2a
+	add rsi,rdx ;--- 000012345 delta to valid is 4
+	mov ecx,eax
+	rep movsb
+	mov ax,"h,"
+	stosw
+	mov al,'"'
+	stosb
 
-.writeG3:
-	mov ecx,[rsi+\
-		TITEM.child]
-	test ecx,ecx
-	jz	.writeG2
+	;--- write param -------
+	mov ecx,[r12+DEVTITEM.oparam]
+	add rcx,r12
+	add rcx,\
+		sizeof.DEVTITEM
+	mov rdx,rdi
+	call utf16.to8
+	add rdi,rax
+	mov al,'"'
+	stosb
+	@do_eol
+	mov r12,[r12+\
+		DEVTITEM.next]
 
-	add rcx,rbx
-	call .writeT
+.writeA2:
+	test r12,r12
+	jnz	.writeA1
 
-.writeG2:
+.writeA3:
 	mov al,09h
 	stosb
 	mov al,")"
 	stosb
 	@do_eol
 
-	test [rsi+\
-		TITEM.type],TPARAM
-	jz	.writeGN
-	mov rcx,[rsi+\
-		TITEM.param]
-	test cl,1
-	jz	.writeGN
+	mov rdx,[r13+\
+		DEVTITEM.next]
 
-	mov eax,'	.:"'
-	stosd
-	and cl,0FEh
-	mov rdx,rdi
-	call utf16.to8
-	add rdi,rax
-	mov ax,'"('
-	stosw
-	mov al,")"
-	stosb
-	@do_eol
-	jmp	.writeGN
-
-.writeT:
-	;--- in RCX tool child ----
-	push rsi
-	mov rsi,rcx
-
-.writeT2:
-	test [rsi+\
-		TITEM.type],TLABEL
-	jnz	.writeT1
-
-.writeTN:
-	mov esi,[rsi+\
-		TITEM.next]
-	add rsi,rbx
-	cmp rsi,rbx
-	jnz	.writeT2
-	jmp	.writeTE
-
-.writeT1:
-	;--- output item ------
-	test [rsi+\
-		TITEM.type],TDELETED
-	jnz	.writeTN
-
-	mov r8d,[rsi+\
-		TITEM.attrib]
-	test r8,r8
-	jz .writeTN
+.writeA4:
+	test edx,edx
+	jnz	.writeA
 	
-	add r8,rbx
-	mov ax,0909h
-	stosw
-	mov ax,'.:'
-	stosw
-	mov al,'"'
-	stosb
 
-	push rsi
-	movzx ecx,[r8+\
-		TITEM.len]
-	lea rsi,[r8+\
-		TITEM.value]
-	rep movsb
-	mov al,'"'
-	stosb
-
-	;--- param and value
-	mov eax,",0h,"
-	stosd
-	mov al,'"'
-	stosb
-	mov rsi,szParam
-	mov ecx,szParam.size-1
-	rep movsb
-	mov al,'"'
-	stosb
-	;-------------------
-
-	pop rsi
+.writeF:
 	@do_eol
+	mov rax,rsp
+	xor edx,edx
 
-	test [rsi+\
-		TITEM.type],TPARAM
-	jz	.writeTN
-	call .writeC
-	jmp	.writeTN
+	;--- compound [config\devtool.utf8]
+	push rdx
+	push uzUtf8Ext
+	push uzDevTName
+	push uzSlash
+	push uzConfName
+	push rax
+	push rdx
+	call art.catstrw
 
-.writeTE:
-	pop rsi
-	ret 0
-
-.writeC:
-	;--- write from carrier of param
-	;--- in RSI item carrier
-	mov rcx,[rsi+\
-		TITEM.param]
-	test ecx,ecx
-	jnz	.writeC1
-	ret 0
-
-.writeC1:
-	mov ax,0909h
-	stosw
-	mov ax,'.:'
-	stosw
-	mov al,'"'
-	stosb
-	mov rdx,rdi
-	call utf16.to8
-	add rdi,rax
-	mov al,'"'
-	stosb
-	push rsi
-
-	;--- param and value
-	mov eax,",0h,"
-	stosd
-	mov al,'"'
-	stosb
-	mov rsi,szParam
-	mov ecx,szParam.size-1
-	rep movsb
-	mov al,'"'
-	stosb
-	;-------------------
-	pop rsi
-	@do_eol
-	ret 0
-
-
-.writeW:
-	mov rcx,r12
+	mov rcx,rsp
 	call art.fcreate_rw
 	inc eax
 	jz .writeE
@@ -593,7 +2082,8 @@ devtool:
 	mov rbx,rax				;--- file handle
 
 	mov r8,rdi
-	mov rdx,rsp
+	lea rdx,[rsp+\
+		FILE_BUFLEN]
 	mov rcx,rax
 	sub r8,rdx
 	call art.fwrite
@@ -610,405 +2100,4 @@ devtool:
 	pop rbx
 	pop rbp
 	ret 0
-
-
-	;ü------------------------------------------ö
-	;|     .ADDGROUP                            |
-	;#------------------------------------------ä
-
-.addgroup:
-	;--- in RCX text
-	push rbx
-	push rdi
-	push rsi
-	push r12
-
-	mov rsi,rcx
-	mov rbx,[pMp]
-
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_cursel
-
-	mov edx,eax
-	sub eax,1
-	adc edx,0
-	
-	mov r12,rdx
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_param
-	test edx,edx
-	jz	.addgroupE
-
-	mov rdi,rdx		;--- in RDI param
-	or [rdi+\
-		TITEM.type],TPARAM
-	or rsi,1			;--- mark this as object
-	mov [rdi+\
-		TITEM.param],rsi
-
-	call .reload
-
-	mov ecx,iCAT_CBX_DEVT
-	call mpurp.sel_icat
-
-	mov rcx,r12
-	inc ecx
-	call mpurp.sel_ifilt
-
-.addgroupE:
-	pop r12
-	pop rsi
-	pop rdi
-	pop rbx
-	ret 0
-
-
-	;ü------------------------------------------ö
-	;|     .ADDTOOL                             |
-	;#------------------------------------------ä
-
-.addtool:
-	push rbx
-	push rdi
-	push rsi
-	sub rsp,\
-		sizeof.LVITEMW+\
-		FILE_BUFLEN
-
-	mov rbx,[pMp]
-	xor esi,esi
-
-	cmp [rbx+\
-		MPURP.idCat],MP_DEVT
-	jz .addtoolB
-
-	mov ecx,iCAT_CBX_DEVT
-	call mpurp.sel_icat
-
-.addtoolB:
-	movzx edi,[rbx+\
-		MPURP.iFilt]
-	test edi,edi
-	jnz	.addtoolB1
-
-	inc edi
-	mov ecx,edi
-	call mpurp.sel_ifilt
-
-.addtoolB1:
-	mov edx,edi
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_param
-	test edx,edx
-	jz	.addtoolE
-
-	mov rsi,rdx		;--- in RSI param
-	xor edi,edi		;--- in RDI 0,dir
-
-	mov rcx,[rbx+\
-		MPURP.hLview]
-	call apiw.set_focus
-
-.addtoolA:
-	mov r9,\
-		LVNI_SELECTED
-	or r8,-1
-	mov rcx,[rbx+\
-		MPURP.hLview]
-	call lvw.get_next
-
-	inc rax
-	jz	.addtoolC ;--- allow no selected tool
-	dec rax
-
-	xor r10,r10
-	mov r8,rax
-	mov r9,rsp
-	mov [r9+\
-		LVITEMW.iItem],eax
-	mov [r9+\
-		LVITEMW.iSubItem],r10d
-	mov rcx,[rbx+\
-		MPURP.hLview]
-	call lvw.get_param
-
-	mov rax,[rsp+\
-		LVITEMW.lParam]
-	test rax,rax
-	jz	.addtoolE
-	
-	mov rsi,rax
-
-	mov r8d,[rsi+\
-		TITEM.attrib]
-	test r8,r8
-	jz	.addtoolE
-
-	add r8,[pTopDevT]
-	mov rdx,rsp
-	lea rcx,[r8+\
-		TITEM.value]
-	call utf8.to16
-
-	mov rcx,rsp
-	call art.get_fname
-
-	;--- RET EAX 0,numchars
-	;--- RET ECX total len
-	;--- RET EDX pname "file.asm"
-	;--- RET R8 string
-
-	xor edi,edi
-	xor r8,r8
-	test eax,eax	;--- err get_fname
-	jz	.addtoolC
-
-	cmp eax,ecx
-	jz	.addtoolC		;--- nopath
-	mov [rdx-2],r8w
-
-	mov rcx,rsp
-	call wspace.dir2hash
-	jnc	.addtoolC
-	mov rdi,rax
-	
-.addtoolC:
-	mov rdx,rsi
-	mov rcx,rdi
-	call .start
-	cmp eax,IDCANCEL
-	jz	.addtoolE
-
-	mov rax,[pIo]
-	add rax,IO_DEVTOOL
-	lea rdi,[rax+IODLG.buf]
-	
-	mov rcx,rdi
-	call art.is_file
-	jz	.addtoolE
-
-	;--- mark the item we will use as 
-  ;--- carrier of new toolpath
-
-	test rsi,rsi
-	jz	.addtoolE
-
-	or [rsi+\
-		TITEM.type],TPARAM
-	mov [rsi+\
-		TITEM.param],rdi
-
-	call .reload
-
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_cursel
-	mov rdi,rax
-
-	mov ecx,iCAT_CBX_DEVT
-	call mpurp.sel_icat
-	mov ecx,edi
-	call mpurp.sel_ifilt
-
-.addtoolE:
-	add rsp,\
-		sizeof.LVITEMW+\
-		FILE_BUFLEN
-	pop rsi
-	pop rdi
-	pop rbx
-	ret 0
-
-	;ü------------------------------------------ö
-	;|     .REMGROUP                            |
-	;#------------------------------------------ä
-.remgroup:
-	push rbp
-	push rbx
-	push rdi
-	push rsi
-	push r12
-	push r13
-
-	mov rbp,rsp
-	and rsp,-16
-
-	sub rsp,\
-		FILE_BUFLEN*3
-
-	mov rbx,[pMp]
-	movzx eax,[rbx+\
-		MPURP.idCat]
-
-	test eax,eax
-	jz	.remgroupE
-
-	cmp eax,MP_DEVT
-	jnz	.remgroupE
-
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_cursel
-	inc eax
-	jz .remgroupE
-	dec eax
-	mov r13,rax
-
-	mov edx,eax
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_param
-	test edx,edx
-	jz	.remgroupE
-	mov rsi,rdx
-
-	mov eax,[rsi+\
-		TITEM.attrib]
-	test eax,eax
-	jz .remgroupE	
-	add rax,[pTopDevT]
-
-;@break
-	mov rdx,rsp
-	lea rcx,[rax+TITEM.value]
-	call utf8.to16
-
-	mov rdi,rsp
-	add rdi,rax
-	@nearest 16,rdi
-	
-	mov r8,rdi
-	mov edx,U16
-	mov ecx,UZ_MSG_U_TGREM
-	call [lang.get_uz]
-
-	mov r12,rdi
-	add r12,rax
-	@nearest 16,r12
-
- 	mov r8,rsp
-	mov rdx,rdi
-	mov rcx,r12
-	sub rsp,20h
-	call [swprintf]
-	add rsp,20h
-
-	mov r8,uzTitle
-	mov rdx,r12
-	mov rcx,[hMain]
-	call apiw.msg_yn
-	cmp eax,IDNO
-	jz .remgroupE
-
-	or [rsi+\
-		TITEM.type],\
-		TDELETED
-
-	call devtool.reload
-
-	mov rcx,[rbx+\
-		MPURP.hLview]
-	call lvw.del_all
-
-	mov r8,r13
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.del_item
-
-	xor ecx,ecx
-	call mpurp.sel_ifilt
-
-.remgroupE:
-	mov rsp,rbp
-	pop r13
-	pop r12
-	pop rsi
-	pop rdi
-	pop rbx
-	pop rbp
-	ret 0
-
-
-	;ü------------------------------------------ö
-	;|     .REMTOOL                             |
-	;#------------------------------------------ä
-
-.remtool:
-	push rbx
-	push rdi
-	push rsi
-	sub rsp,\
-		sizeof.LVITEMW
-
-	mov rbx,[pMp]
-	movzx eax,[rbx+\
-		MPURP.idCat]
-	test eax,eax
-	jz	.remtoolE
-	movzx ecx,[rbx+\
-		MPURP.iFilt]
-	cmp eax,MP_DEVT
-	jnz	.remtoolE
-	test ecx,ecx
-	jz	.remtoolE
-
-	mov r9,\
-		LVNI_SELECTED
-	or r8,-1
-	mov rcx,[rbx+\
-		MPURP.hLview]
-	call lvw.get_next
-	inc rax
-	jz	.remtoolE
-	dec rax
-
-	mov r8,rax
-	mov r9,rsp
-	xor r10,r10
-	mov [r9+\
-		LVITEMW.iItem],eax
-	mov [r9+\
-		LVITEMW.iSubItem],r10d
-	mov rcx,[rbx+\
-		MPURP.hLview]
-	call lvw.get_param
-
-	mov rax,[rsp+\
-		LVITEMW.lParam]
-	test rax,rax
-	jz	.remtoolE
-
-	or [rax+\
-		TITEM.type],TDELETED
-
-	;------------------------
-.remtoolA:
-	call devtool.reload
-
-	mov rcx,[rbx+\
-		MPURP.hCbxCat]
-	call cbex.get_cursel
-	mov rsi,rax
-
-	mov rcx,[rbx+\
-		MPURP.hCbxFilt]
-	call cbex.get_cursel
-	mov rdi,rax
-	
-	mov ecx,iCAT_CBX_DEVT
-	call mpurp.sel_icat
-	mov ecx,edi
-	call mpurp.sel_ifilt
-
-.remtoolE:
-	add rsp,\
-		sizeof.LVITEMW
-	pop rsi
-	pop rdi
-	pop rbx
-	ret 0
-
 

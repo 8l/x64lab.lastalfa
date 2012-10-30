@@ -98,7 +98,6 @@
 	IO_NEWNAME equ sizeof.IODLG
 	IO_SAVEWSP equ sizeof.IODLG * 2
 	IO_NEWLNK  equ sizeof.IODLG * 3
-	IO_DEVTOOL equ sizeof.IODLG * 4
 
 	;--- Ownerdraw menuitem
 	struct OMNI	
@@ -218,7 +217,39 @@ ends
 	STATB_EOLPART	equ 3
 	STATB_PARTS		equ 4
 
-	struct CONS
+	MAX_PLUG	equ 16
+
+	
+	struct PLUGGER
+		id			dd 0
+		selped	db 0
+		cyper		db 0
+		flags		db 0	;--- external/gui
+		iniped	db 0	;--- eventual inital plugged
+		hDlg		dq 0
+		hPanel	dq 0
+		f_resize	dq 0
+		f_destroy	dq 0
+		f_show		dq 0
+		f_message	dq 0
+		peds		dq MAX_PLUG dup (0)
+	ends
+
+	struct PLUGGED
+		hwnd	dq 0
+		id		dd 0
+					dd 0
+	ends
+
+	struct MPURP PLUGGER
+		hCbx	dq 0
+		hPrg	dq 0
+					dd 0	;--- id category
+					dd 0	
+					dq 0
+	ends
+
+	struct CONS PLUGGED
 		hCbx			dq 0
 		hSci			dq 0
 		cmd				db 512 dup (0)
@@ -228,21 +259,76 @@ ends
 		part_eol	dd 0
 	ends
 
-	struct MPURP
-		hDlg			dq 0
-		hCbxCat		dq 0
-
-		hCbCat		dq 0	;--- child original ComboBox					
-		hCbxFilt	dq 0
-		hPrg			dq 0
-		hLview		dq 0
-
-		idCat			dw 0	;--- id category
-		iFilt			dw 0	;--- item position
-							dw 0	
-							dw 0
-							dq 0
+	struct DEVT PLUGGED
+		hLvw	dq 0
+		hTlb	dq 0
+		hCbx	dq 0
+		pGrp	dq 0
+					dd 0
+					dd 0
+		iGrp	dd 0
+					dd 0
 	ends
+
+	struct DEVTITEM
+		next	dq 0
+		union
+			item	dq 0
+			group	dq 0
+		ends
+		dir		 dq 0
+		flags  dd 0
+		oparam dd 0	
+		;--- follow group name or
+		;--- follow filename.ext
+		;--- follow paras
+	ends
+
+	struct TOOLDLG
+		hDlg			dq 0
+		hEdiDir		dq 0
+
+		hEdiName	dq 0
+		hEdiPara	dq 0
+
+		hChkPara	dq 0
+		hRadShow	dq 0
+
+		hRadHide	dq 0
+		hChkExec	dq 0
+
+		hStcIco		dq 0
+		hStcName	dq 0
+
+		hStcPara	dq 0
+		hOk				dq 0	
+
+		hCanc		dq 0
+		flags		dq 0
+		dir			dq 0
+						dq 0
+		fname		db FILE_BUFLEN dup (0)
+		param		db FILE_BUFLEN dup (0)
+		rc			RECT
+	ends
+
+	struct TMPL PLUGGED
+		hLvwT	dq 0	;--- type mod\Arm prj\Asm wsp
+		hLvwC dq 0	;--- items code
+
+		hTlb	dq 0
+		iDrag	dd 0	;--- idx dragged item
+		view	dw 0	;--- id selected button
+		fDrag	db 0	;--- flag action
+					db 0
+
+		hDrop	dq 0	;--- dest plugin Workspace/Edit/Open docs
+		param	dq 0	;--- item param
+		hIcon	dq 0	;--- idx icon of dragged item
+					dq 0
+		text	du 128 dup (?) ;--- text of dragged item
+	ends
+
 
 	struct CONFIG
 		version	dw 64h
@@ -254,7 +340,7 @@ ends
 						dd ?
 						dd ?
 		;-------------------------
-		lang8		db 16 dup (0)
+		lang8		db 16 dup (?)
 		;-------------------------
 		lang16  db 32 dup (?)
 		;-------------------------
@@ -265,7 +351,7 @@ ends
 
 		;-------------------------
 		docs.bkcol	dd 0CCBBAAh
-		mpurp.bkcol dd 0DADADAh
+		devt.bkcol  dd 0DADADAh
 		pos			 		dq 0
 		;-------------------------
 		mpurp.flags		dq 0	;--- LOCKED

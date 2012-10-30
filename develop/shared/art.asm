@@ -1373,7 +1373,7 @@ end if
 	; push dest	;<---- mandatory
 	; push 0		;<---- optional,zero first dd of dest str
 	; call .catstrw
-	; RET EAX = unicode code-points
+	; RET EAX = unicode code-points+0 term
 	;----------------------------------------------------
 	push rbp
 	push rbx

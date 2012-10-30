@@ -11,6 +11,7 @@ config\config.utf8
 config\accel.utf8
 config\x64lab.bmp
 ext\*
+template\*
 
 tool\lang.vbs
 lang\en-US\lang.dll

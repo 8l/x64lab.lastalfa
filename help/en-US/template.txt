@@ -1,0 +1,49 @@
+
+ x64lab
+ Managing Template
+
+ In the [template] directory you can find a folder
+ named [module] containing folders for single template-files 
+ to be used in x64lab.
+
+ at the moment i write x64lab manages only text utf-8-no-BOM files.
+ in future version i will add capabilities to manage projects,
+ workspaces,fragments and binary files.
+
+ Bare-Module Templates are templates of one single file.
+
+ - How to add a template and use it.
+
+   1) from the Multipurpose plugin select "Ready Templates"
+      in the combobox. a list of folders appears below in the listview.
+      by default you will find two folders in it.
+
+      - "module\arm"
+      - "module\assembly32"
+
+   2) click on "module\assembly32" listed there.
+      you will have just in the base listview of modules
+      the following files:
+
+        - 32bit_console.asm
+        - blank_main.asm
+        - blank_main.inc
+        - help.txt
+
+   3) to use "32bit_console.asm" as template drag the item
+      and drop it on the "Open documents" plugin. an "untitled-filename"
+      will be added in "Open documents". the file has been opened to be modified.
+      after modification, save it giving a name and a path
+
+   
+- How to modify a template.
+  follow step 1) and 2) above.
+
+  3) to modify "32bit_console.asm" as template drag the item
+     and drop it on the "Editor panel" plugin.
+     after modification, save it.
+
+
+ 
+
+

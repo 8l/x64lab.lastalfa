@@ -20,9 +20,12 @@ section '.data' data readable writeable
 	pConf		dq sizeof.CONFIG
 	pCons 	dq sizeof.CONS
 	pMp			dq sizeof.MPURP
-	pIo			dq sizeof.IODLG * 5
+	pIo			dq sizeof.IODLG * 4
 	pHu			dq sizeof.HU
 	pEdit		dq sizeof.EDIT
+	pDevT		dq sizeof.DEVT
+	pTool		dq sizeof.TOOLDLG
+	pTmpl		dq sizeof.TMPL
 	pKdlg		dq sizeof.KEYDLG
 	pTime		dq sizeof.SYSTIME
 	pKeya		dq (MI_OTHER-MNU_X64LAB) * sizeof.KEYA
@@ -32,10 +35,6 @@ section '.data' data readable writeable
 	hSciDll	dq 0
 	hDocker	dq 0
 
-	pTopDevT	dq 0
-	 .dsize		dd 0
-	 .items		dd 0
-
 	pExtClass	dq 0
 
 	hTree			dq 0
@@ -43,10 +42,12 @@ section '.data' data readable writeable
 	hDocs			dq 0
 	pLabfWsp	dq 0
 
-	hInst				dq 0
-	hAccel			dq 0
-	hMain				dq 0
-	hMnuMain		dq 0
+	hTip			dq 0
+	hInst			dq 0
+	hAccel		dq 0
+	hMain			dq 0
+	hMnuMain	dq 0
+	hFloat		dq 0
 	hlaSysList	dq 0
 	hsmSysList	dq 0
 	hMnuFont		dq 0
@@ -99,6 +100,9 @@ section '.data' data readable writeable
 		uzLangName	du "lang",0
 		uzProjName	du "project",0
 		uzTemplName du "template",0
+		uzWspName		du "workspace",0
+		uzModName		du "module",0
+		uzSnipName	du "snippet",0
 		uzTmpName	  du "tmp",0
 		uzToolName 	du "tool",0
 		uzDevTName	du "devtool",0
@@ -124,11 +128,16 @@ section '.data' data readable writeable
 		uzCscript	 du "cscript",0
 		uzNoLogo	 du "//nologo",0
 		uzR				 du "r /e" ;--- "explore" "r /e"  ',"path"'
+		;---		uzStart		 du "cmd /C  ",0
+		
 
 		uzTreeClass	du "SysTreeView32",0
-		uzLViewClass	du "SysListView32",0
+		uzLvwClass	du "SysListView32",0
+		uzStcClass	du "STATIC",0
+
 		uzCbexClass	du "ComboBoxEx32",0
 		uzStbClass	du "msctls_statusbar32",0
+		uzTipClass	du "tooltips_class32",0
 		uzSciDll		du "Scilexer64.dll",0
 		uzSciClass	du "Scintilla",0
 		uzCourierN	db "Courier New",0
@@ -192,23 +201,19 @@ section '.data' data readable writeable
 				;	MI_SCI_UNCOMMB,	0,OWN,DIF
 			
 		@mnp MP_CONF,		0,0,ISS,\
-			MI_CONF_KEY,	0,OWN,DIF,\
+			MI_CONF_KEY,	14,OWN,DIF,\
 				UZ_MPWIN,		1,MFS_DISABLED,MIIM_STATE or MIIM_STRING
 	
-		@mnp MP_LANG,	0,OWN,DIF or MIIM_SUBMENU
+		@mnp MP_LANG,	13,OWN,DIF or MIIM_SUBMENU
 
 			@mnp MP_DEVT,		11,OWN,DIF or MIIM_SUBMENU,\
 				MI_DEVT_ADD,	10,OWN,DIF,\
 				MI_DEVT_REM,	12,OWN,DIF,\
-				-1,\
-				MI_DEVT_ADDG,	0,OWN,DIF,\
-				MI_DEVT_REMG,	0,OWN,DIF,\
-				-1,\
-				MI_DEVT_MAN,	0,OWN,DIF,\
-				MI_DEVT_REL,	0,OWN,DIF
+				MI_DEVT_ADDG, 0,OWN,DIF,\
+				MI_DEVT_REMG,	0,OWN,DIF
 
 		@mnp MP_UPD,		0,0,ISS,\
-			MI_UPD_LANG,	0,OWN,DIF
+			MI_UPD_LANG,	15,OWN,DIF
 
 		@mnp MP_PATH,		0,RJU,ISS or MIIM_FTYPE,\
 			MI_PA_BROWSE,	0,OWN,DIF,\

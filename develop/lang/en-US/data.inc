@@ -85,11 +85,9 @@
 		MP_LANG,0,U8+UR,db "Language",\
 		MP_DEVT,0,U8+UR,db "Developer tools",\
 			MI_DEVT_ADD,0,U8+UR,db "Browse to add new tool",\
+			MI_DEVT_ADDG,0,U8+UR,db "Add default GROUP label",\
 			MI_DEVT_REM,0,U8+UR,db "Remove tool",\
-			MI_DEVT_ADDG,0,U8+UR,db "Add a new GROUP label",\
 			MI_DEVT_REMG,0,U8+UR,db "Remove GROUP",\
-			MI_DEVT_MAN,0,U8+UR,db "Manage tools file (expert user)",\
-			MI_DEVT_REL,0,U8+UR,db "Reload tools",\
 		MP_SCI,0,U8+UR,db "Scintilla",\
 			MI_SCI_COMML,0,U8+UR,db "Comment by line/s",\
 			MI_SCI_COMMB,0,U8+UR,db "Comment block/s",\
@@ -121,6 +119,7 @@
 			BB_REG,0,U8+UR,db "Registers",\
 			BB_RET,0,U8+UR,db "Returns",\
 			BB_SYS,0,U8+UR,db "System",\
+			\;---------------------------------------------
 			UZ_DESCR,0,U8+UR,db "Description",\
 			UZ_INFO_LNK,0,U8+UR,db "Create a new smartlink",\
 			UZ_LNK_NAME,0,U8+UR,db "smartlinkname",\
@@ -137,10 +136,7 @@
 				"Removing group [%ls] cannot be undone. ",13,10,\
 				"Tools contained into it will be removed too !",13,10,\
 				"Remove it permanently ?">,\
-			UZ_MSG_TADDG,0,U8+UR,<db \
-				"- Select 'Developer Tools' in the 'Multipurpose' Window",13,10,\
-				"- Type something in the comboedit of the listed groups",13,10,\
-				"- Press <Enter> to accept the label as group name">,\
+			UZ_MSG_TADDG,0,U8+UR,db "Type something, press <enter> to create a Group",\
 			UZ_MSG_SCIREL,0,U8+UR,<db \
 				"After saving class files for Scintilla, please close and reopen",13,10,\
         "current editor open files too in order",13,10,\
@@ -162,6 +158,10 @@
 			UZ_WZERO,0,U8+UR,db "0000",\
 			UZ_RESTART,0,U8+UR,db "x64lab needs restarting. Close it now ?",\
 			UZ_MSG_LNK,0,U8+UR,<db "The selected treeitem is empty.",13,10,\
-				"Add this smartlink as its first child item ?">
+				"Add this smartlink as its first child item ?">,\
+			UZ_TEMPLATE,0,U8+UR,db "Ready templates",\
+			UZ_TMPL_MOD,0,U8+UR,db "Bare-module templates"
+			
 
-
+		;---			MI_DEVT_MAN,0,U8+UR,db "Manage tools file (expert user)",\
+		;---			MI_DEVT_REL,0,U8+UR,db "Reload tools",\

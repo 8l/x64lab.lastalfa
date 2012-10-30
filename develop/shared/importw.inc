@@ -135,6 +135,7 @@
 		DialogBoxParamW,"DialogBoxParamW",\
 		DispatchMessageW,"DispatchMessageW",\
 		DragDetect,"DragDetect",\
+		DrawIconEx,"DrawIconEx",\
 		DrawFrameControl,"DrawFrameControl",\
 		DrawCaption,"DrawCaption",\
 		DrawEdge,"DrawEdge",\

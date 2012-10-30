@@ -1229,6 +1229,7 @@ wspace:
 	;ö---------------------------------------------------ü
 
 .new_bt:
+	;--- RET RAX 0,labf
 	push rbx
 	
 	mov edx,\
@@ -2622,6 +2623,9 @@ wspace:
 	mov r8,rax
 	mov rcx,[hDocs]
 	call lvw.ins_col
+
+
+
 	;jmp	.setupB
 
 .setupE:
@@ -2911,6 +2915,9 @@ wspace:
 	jmp	winproc.ret0
 
 
+	;#---------------------------------------------------ö
+	;|     .SPAWN                                        |
+	;ö---------------------------------------------------ü
 
 .spawn:
 	;--- in RCX appname

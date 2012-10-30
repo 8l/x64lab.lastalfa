@@ -710,6 +710,13 @@ apiw:
 	jmp	.prolog0
 @endusing
 
+@using .get_msgpos
+	;--- in RCX LPPOINT
+.get_msgpos:
+	mov rax,[GetMessagePos]
+	jmp	.prolog0
+@endusing
+
 @using .set_curspos
 .set_curspos:
 	mov rax,[SetCursorPos]
@@ -767,6 +774,18 @@ apiw:
 @using .chwinfptx
 .chwinfptx:
 	mov rax,[ChildWindowFromPointEx]
+	jmp	.prolog0
+@endusing
+
+@using .chwinfpt
+.chwinfpt:
+	mov rax,[ChildWindowFromPoint]
+	jmp	.prolog0
+@endusing
+
+@using .winfpt
+.winfpt:
+	mov rax,[WindowFromPoint]
 	jmp	.prolog0
 @endusing
 

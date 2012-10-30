@@ -88,11 +88,9 @@
 			MP_LANG,0,U8+UR,db "Language",\
 		MP_DEVT,0,U8+UR,db "Narzędzia Programisty",\
 			MI_DEVT_ADD,0,U8+UR,db "Przeglądaj aby dodać nowe narzędzie",\
-			MI_DEVT_REM,0,U8+UR,db "Usuń narzędzie",\
 			MI_DEVT_ADDG,0,U8+UR,db "Dodaj nową etykietę GRUPA",\
+			MI_DEVT_REM,0,U8+UR,db "Usuń narzędzie",\
 			MI_DEVT_REMG,0,U8+UR,db "Usuń GRUPĘ",\
-			MI_DEVT_MAN,0,U8+UR,db "Zarządzanie plikiem narzędzi (dla zaawansowanych Urzytkowników)",\
-			MI_DEVT_REL,0,U8+UR,db "Przeładuj Narzędzia",\
 		MP_SCI,0,U8+UR,db "Scintilla",\
 			MI_SCI_COMML,0,U8+UR,db "Zakomentuj linie",\
 			MI_SCI_COMMB,0,U8+UR,db "Zakomentuj bloki",\
@@ -140,10 +138,7 @@
 				"Usunięcie grupy [%ls] jest nieodwracalne. ",13,10,\
 				"Narzędzia, które zawiera, również zostaną usunięte !",13,10,\
 				"Usunąć trwale ?">,\
-			UZ_MSG_TADDG,0,U8+UR,<db \
-				"- Wybierz 'Narzędzia programisty' w Oknie 'Uniwerslany'",13,10,\
-				"- Wpisz coś do wspólnej edycji wymienionych grup",13,10,\
-				"- Wciśnij <Enter> aby zaakceptować tą etykietę jako nazwę Grupy">,\
+			UZ_MSG_TADDG,0,U8+UR,db "(no transl) Type something, press <enter> to create a Group",\
 			UZ_MSG_SCIREL,0,U8+UR,<db \
 				"Po zapisaniu plików klas Scintilli, proszę zamknąć i otworzyć ponownie",13,10,\
         "aktualny edytor również otwiera pliki w kolejności",13,10,\
@@ -165,6 +160,9 @@
 			UZ_WZERO,0,U8+UR,db "0000",\
 			UZ_RESTART,0,U8+UR,db "Please restart x64lab to apply change. Close it now ?",\
 			UZ_MSG_LNK,0,U8+UR,<db "(no transl.) The selected treeitem is empty.",13,10,\
-				"Add this smartlink as its first child item ?">
+				"Add this smartlink as its first child item ?">,\
+			UZ_TEMPLATE,0,U8+UR,db "(no transl)Ready templates",\
+			UZ_TMPL_MOD,0,U8+UR,db "(no transl) Bare-module templates"
 
-
+			;---			MI_DEVT_MAN,0,U8+UR,db "Zarządzanie plikiem narzędzi (dla zaawansowanych Urzytkowników)",\
+			;---			MI_DEVT_REL,0,U8+UR,db "Przeładuj Narzędzia",\

@@ -14,9 +14,11 @@
 	ICC_PROGRESS_CLASS     = 0020h
 	ICC_TAB_CLASSES        = 0008h
 	ICC_TREEVIEW_CLASSES   = 0002h
-	ICC_UPDOWN_CLASS       = 0010h
+  ICC_TOOLTIP_CLASSES    = 0x1000
+  ICC_UPDOWN_CLASS       = 0010h
 	ICC_USEREX_CLASSES     = 0200h
 	ICC_WIN95_CLASSES      = 00FFh
+
 
 	struct INITCOMMONCONTROLSEX
 		dwSize dd ?
@@ -214,26 +216,54 @@ struct HD_NOTIFY
   pitem   dq ?
 ends
 
-struct TBBUTTON
-  iBitmap   dd ?
-  idCommand dd ?
-  fsState   db ?
-  fsStyle   db ?
-	    dw ?
-  dwData    dd ?
-  iString   dd ?
-ends
+;---struct TBBUTTON
+;---  iBitmap   dd ?
+;---  idCommand dd ?
+;---  fsState   db ?
+;---  fsStyle   db ?
+;---						dw ?
+;---  dwData    dd ?
+;---  iString   dd ?
+;---ends
+
+	struct TBBUTTON
+		iBitmap   dd ?
+		idCommand dd ?
+		fsState   db ?
+		fsStyle   db ?
+							dw ?
+							dd ?
+		dwData    dq ?
+		iString   dq ?
+	ends
+
+;---typedef struct {
+;---  int       iBitmap;
+;---  int       idCommand;
+;---  BYTE      fsState;
+;---  BYTE      fsStyle;
+;---#ifdef _WIN64
+;---  BYTE      bReserved[6];
+;---#else 
+;---#if defined(_WIN32)
+;---  BYTE      bReserved[2];
+;---#endif 
+;---#endif 
+;---  DWORD_PTR dwData;
+;---  INT_PTR   iString;
+;---} TBBUTTON, *PTBBUTTON, *LPTBBUTTON;
+
 
 struct COLORMAP
   from dd ?
   to   dd ?
 ends
 
-struct TBADDBITMAP
-  hInst dq ?
-  nID	dd ?
-	dd ?
-ends
+	struct TBADDBITMAP
+		hInst dq ?
+		nID		dd ?
+					dd ?
+	ends
 
 struct TBSAVEPARAMS
   hkr	       dq ?
@@ -281,16 +311,34 @@ struct REBARBANDINFO
   wID	      dd ?
 ends
 
-struct TOOLINFO
-  cbSize   dd ?
-  uFlags   dd ?
-  hwnd	   dq ?
-  uId	   dd ?
-  Rect	   RECT
-	   dd ?
-  hInst    dq ?
-  lpszText dq ?
-ends
+	;---typedef struct {
+	;---  UINT      cbSize;
+	;---  UINT      uFlags;
+	;---  HWND      hwnd;
+	;---  UINT_PTR  uId;
+	;---  RECT      rect;
+	;---  HINSTANCE hinst;
+	;---  LPTSTR    lpszText;
+	;---#if (_WIN32_IE >= 0x0300)
+	;---  LPARAM    lParam;
+	;---#endif 
+	;---#if (_WIN32_WINNT >= Ox0501)
+	;---  void      *lpReserved;
+	;---#endif 
+	;---} TOOLINFO, *PTOOLINFO, *LPTOOLINFO;
+
+	struct TOOLINFO
+		cbSize dd ?
+		uFlags dd ?
+		hwnd	 dq ?
+		uId	   dq ?	;--- should be dd,dd
+		rect	 RECT
+		hInst				dq ?
+		lpszText		dq ?
+		lParam			dq ?
+		lpReserved	dq ?
+	ends
+	@sizea16 TOOLINFO
 
 struct TTHITTESTINFO
   hwnd dq ?
@@ -298,12 +346,33 @@ struct TTHITTESTINFO
   ti   TOOLINFO
 ends
 
-struct TOOLTIPTEXT
+	struct NMTBGETINFOTIP
+		hde NMHDR
+		pszText dq ?
+    cchTextMax dd ?
+    iItem  dd ?
+		lParam dq ?
+	ends
+
+	;---	typedef struct {
+	;---		NMHDR     hdr;
+	;---		LPTSTR    lpszText;
+	;---		TCHAR     szText;
+	;---		HINSTANCE hinst;
+	;---		UINT      uFlags;
+	;---	#if (_WIN32_IE >= 0x0300)
+	;---		LPARAM    lParam;
+	;---	#endif 
+	;---	} NMTTDISPINFO, *LPNMTTDISPINFO;
+
+struct NMTTDISPINFO
   hdr	   NMHDR
   lpszText dq ?
-  szText   db 80 dup (?)
+  szText   du 80 dup (?)
   hinst    dq ?
   uFlags   dd ?
+					 dd ?
+	lParam	 dq ?
 ends
 
 struct UDACCEL
@@ -542,20 +611,20 @@ ends
 
 ; Common control window classes
 
-HOTKEY_CLASS	   equ 'msctls_hotkey32'
-PROGRESS_CLASS	   equ 'msctls_progress32'
-STATUS_CLASS	   equ 'msctls_statusbar32'
-TRACKBAR_CLASS	   equ 'msctls_trackbar32'
-UPDOWN_CLASS	   equ 'msctls_updown32'
-TOOLTIPS_CLASS	   equ 'tooltips_class32'
-ANIMATE_CLASS	   equ 'SysAnimate32'
-HEADER_CLASS	   equ 'SysHeader32'
-LISTVIEW_CLASS	   equ 'SysListView32'
-TREEVIEW_CLASS	   equ 'SysTreeView32'
-TABCONTROL_CLASS   equ 'SysTabControl32'
-MONTHCAL_CLASS	   equ 'SysMonthCal32'
+HOTKEY_CLASS	  equ 'msctls_hotkey32'
+PROGRESS_CLASS	equ 'msctls_progress32'
+STATUS_CLASS	  equ 'msctls_statusbar32'
+TRACKBAR_CLASS	equ 'msctls_trackbar32'
+UPDOWN_CLASS	  equ 'msctls_updown32'
+TOOLTIPS_CLASS	equ 'tooltips_class32'
+ANIMATE_CLASS	  equ 'SysAnimate32'
+HEADER_CLASS	  equ 'SysHeader32'
+LISTVIEW_CLASS	equ 'SysListView32'
+TREEVIEW_CLASS	equ 'SysTreeView32'
+TABCONTROL_CLASS equ 'SysTabControl32'
+MONTHCAL_CLASS	 equ 'SysMonthCal32'
 DATETIMEPICK_CLASS equ 'SysDateTimePick32'
-TOOLBAR_CLASS	   equ 'ToolbarWindow32'
+TOOLBAR_CLASS	 equ 'ToolbarWindow32'
 REBAR_CLASS	   equ 'ReBarWindow32'
 
 ; Ranges for control message IDs
@@ -845,6 +914,7 @@ HDN_BEGINTRACK	     = HDN_BEGINTRACKA
 HDN_ENDTRACK	     = HDN_ENDTRACKA
 HDN_TRACK	     = HDN_TRACKA
 
+
 ; Toolbar bitmap flags
 
 CMB_MASKED = 2
@@ -878,6 +948,20 @@ TBSTYLE_TRANSPARENT = 8000h
 ; Toolbar button extended styles
 
 TBSTYLE_EX_DRAWDDARROWS = 0001h
+define TBSTYLE_EX_MIXEDBUTTONS             0x00000008
+
+
+define BTNS_BUTTON     TBSTYLE_BUTTON     
+define BTNS_SEP        TBSTYLE_SEP        
+define BTNS_CHECK      TBSTYLE_CHECK      
+define BTNS_GROUP      TBSTYLE_GROUP      
+define BTNS_CHECKGROUP TBSTYLE_CHECKGROUP 
+define BTNS_DROPDOWN   TBSTYLE_DROPDOWN   
+define BTNS_AUTOSIZE   TBSTYLE_AUTOSIZE   ; automatically calculate the cx of the button
+define BTNS_NOPREFIX   TBSTYLE_NOPREFIX   ; this button should not have accel prefix
+define BTNS_SHOWTEXT   0x0040             ; // ignored unless TBSTYLE_EX_MIXEDBUTTONS is set
+define BTNS_WHOLEDROPDOWN  0x0080         ; // draw drop-down arrow, but without split arrow section
+
 
 ; Toolbar messages
 
@@ -942,6 +1026,9 @@ TB_GETEXTENDEDSTYLE	 = WM_USER + 85
 TB_GETBUTTONTEXT	 = TB_GETBUTTONTEXTA
 TB_SAVERESTORE		 = TB_SAVERESTOREA
 TB_ADDSTRING		 = TB_ADDSTRINGA
+
+define TB_HITTEST        (WM_USER + 69)
+define TB_INSERTBUTTONW WM_USER+67
 
 ; System-defined button bitmaps
 
@@ -1012,8 +1099,11 @@ TBN_TOOLBARCHANGE  = TBN_FIRST - 8
 TBN_CUSTHELP	   = TBN_FIRST - 9
 TBN_DROPDOWN	   = TBN_FIRST - 10
 TBN_CLOSEUP	   = TBN_FIRST - 11
+
+define TBN_GETINFOTIPW (TBN_FIRST - 19)
 TBN_GETBUTTONINFOW = TBN_FIRST - 20
 TBN_GETBUTTONINFO  = TBN_GETBUTTONINFOA
+
 
 ; ReBar styles
 
@@ -1106,10 +1196,14 @@ RBN_DELETINGBAND  = RBN_FIRST - 6
 RBN_DELETEDBAND   = RBN_FIRST - 7
 RBN_CHILDSIZE	  = RBN_FIRST - 8
 
-; Tooltip styles
-
-TTS_ALWAYSTIP = 1
-TTS_NOPREFIX  = 2
+	;---/* Tool tips */
+ define TTS_ALWAYSTIP       0x01
+ define TTS_NOPREFIX        0x02
+ define TTS_NOANIMATE       0x10
+ define TTS_NOFADE          0x20
+ define TTS_BALLOON         0x40
+ define TTS_CLOSE           0x80
+ define TTS_USEVISUALSTYLE  0x100
 
 ; Tooltip flags
 
@@ -1138,9 +1232,14 @@ TTM_SETTOOLINFOA    = WM_USER + 9
 TTM_HITTESTA	    = WM_USER + 10
 TTM_GETTEXTA	    = WM_USER + 11
 TTM_UPDATETIPTEXTA  = WM_USER + 12
-TTM_GETTOOLCOUNT    = WM_USER + 13
 TTM_ENUMTOOLSA	    = WM_USER + 14
 TTM_GETCURRENTTOOLA = WM_USER + 15
+TTM_ADDTOOL	    = TTM_ADDTOOLA
+TTM_DELTOOL	    = TTM_DELTOOLA
+TTM_GETTOOLINFO     = TTM_GETTOOLINFOA
+TTM_SETTOOLINFO     = TTM_SETTOOLINFOA
+
+TTM_GETTOOLCOUNT    = WM_USER + 13
 TTM_WINDOWFROMPOINT = WM_USER + 16
 TTM_ADDTOOLW	    = WM_USER + 50
 TTM_DELTOOLW	    = WM_USER + 51
@@ -1152,24 +1251,26 @@ TTM_GETTEXTW	    = WM_USER + 56
 TTM_UPDATETIPTEXTW  = WM_USER + 57
 TTM_ENUMTOOLSW	    = WM_USER + 58
 TTM_GETCURRENTTOOLW = WM_USER + 59
-TTM_ADDTOOL	    = TTM_ADDTOOLA
-TTM_DELTOOL	    = TTM_DELTOOLA
 TTM_NEWTOOLRECT     = TTM_NEWTOOLRECTA
-TTM_GETTOOLINFO     = TTM_GETTOOLINFOA
-TTM_SETTOOLINFO     = TTM_SETTOOLINFOA
 TTM_HITTEST	    = TTM_HITTESTA
 TTM_GETTEXT	    = TTM_GETTEXTA
 TTM_UPDATETIPTEXT   = TTM_UPDATETIPTEXTA
 TTM_ENUMTOOLS	    = TTM_ENUMTOOLSA
 TTM_GETCURRENTTOOL  = TTM_GETCURRENTTOOLA
 
-; Tooltip notifications
+define TTM_UPDATE    (WM_USER + 29)
+define TTM_POPUP     (WM_USER + 34)
 
-TTN_NEEDTEXTA = TTN_FIRST - 0
-TTN_SHOW      = TTN_FIRST - 1
-TTN_POP       = TTN_FIRST - 2
-TTN_NEEDTEXTW = TTN_FIRST - 10
-TTN_NEEDTEXT  = TTN_NEEDTEXTA
+	; Tooltip notifications
+	TTN_NEEDTEXTA = TTN_FIRST - 0
+	TTN_SHOW      = TTN_FIRST - 1
+	TTN_POP       = TTN_FIRST - 2
+	TTN_NEEDTEXTW = TTN_FIRST - 10
+	TTN_NEEDTEXT  = TTN_NEEDTEXTA
+
+	define TTN_GETDISPINFOA (TTN_FIRST - 0)
+	define TTN_GETDISPINFOW (TTN_FIRST - 10)
+	define TTN_LINKCLICK (TTN_FIRST - 3)
 
 ; Status bar styles
 

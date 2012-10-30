@@ -39,6 +39,23 @@ win:
 	mov rcx,rax
 	call iml.set_bkcol
 
+	;--- create tooltip ------
+	mov rcx,rbx
+	call tip.create
+	mov [hTip],rax
+
+	mov rax,SWP_NOMOVE \
+		or SWP_NOSIZE \
+		or SWP_NOACTIVATE
+	mov rdx,HWND_TOPMOST
+	mov rcx,[hTip]
+	call apiw.set_wpos
+	;--------------------------
+
+	mov rcx,rbx
+	call float.create
+	mov [hFloat],rax
+
 	xor eax,eax
 	mov [rdi+58h],rax
 	mov [rdi+50h],rsi
@@ -78,8 +95,8 @@ win:
 		or LVS_REPORT
 	;mov r9,0x50810105
 	xor r8,r8
-	mov rdx,uzLViewClass
-	mov rcx,WS_EX_WINDOWEDGE;WS_EX_STATICEDGE;0;
+	mov rdx,uzLvwClass
+	mov rcx,0;WS_EX_WINDOWEDGE;;WS_EX_CLIENTEDGE;WS_EX_STATICEDGE;0;
 	call r12
 	test rax,rax
 	jz .controlsE
@@ -211,7 +228,7 @@ win:
 	push CFG_DOCS_DOCK_ID
 	push MI_FI_OPEN
 
-	mov r10,0
+	mov r10,[pCons]
 	mov r9,console.proc
 	mov r8,rbx
 	mov rdx,CONS_DLG
@@ -222,14 +239,42 @@ win:
 	push CFG_CONS_DOCK_ID
 	push UZ_CONS_WIN
 
+	;---	mov rax,[perAlfa]
+	;---	mov edx,PER_ALFA
+	;---	mov [rax+\
+	;---		PLUGGER.id],edx
+	;---	mov r10,rax
+	;---	mov r9,plug.proc
+	;---	mov r8,rbx
+	;---	mov rcx,rsi
+	;---	call apiw.cdlgp
+
+	;---	push rax
+	;---	push CFG_CONS_DOCK_ID
+	;---	push UZ_CONS_WIN
+	;-------------------------------
 	push [hTree]
 	push CFG_WSPACE_DOCK_ID
 	push UZ_WSPACE
 
-	mov r10,0
-	mov r9,mpurp.proc
+	;---	mov r10,0
+	;---	mov r9,mpurp.proc
+	;---	mov r8,rbx
+	;---	mov rdx,MPURP_DLG
+	;---	mov rcx,rsi
+	;---	call apiw.cdlgp
+
+	;---	push rax
+	;---	push CFG_MPURP_DOCK_ID
+	;---	mov ecx,UZ_MPWIN
+
+	mov rax,[pMp]
+	mov edx,PER_MPURP
+	mov [rax+\
+		PLUGGER.id],edx
+	mov r10,rax
+	mov r9,plug.proc
 	mov r8,rbx
-	mov rdx,MPURP_DLG
 	mov rcx,rsi
 	call apiw.cdlgp
 
@@ -330,7 +375,167 @@ iml:
 	mov rax,\
 		[ImageList_Draw]
 	jmp	apiw.prologP
-	
+
+   ;ü------------------------------------------ö
+   ;|   TOOLTIP                                |
+   ;#------------------------------------------ä
+
+tip:
+.create:
+	;--- in RCX parent
+	push rbp
+	mov rbp,rsp
+	and rsp,-16
+	sub rsp,60h
+	lea rdx,[rsp+20h]
+	xor eax,eax
+
+	mov r8,[hInst]
+	mov [rdx+38h],rax
+	mov [rdx+30h],r8
+	mov [rdx+28h],rax
+	mov [rdx+20h],rcx
+	mov [rdx+18h],rax
+	mov [rdx+10h],rax
+	mov [rdx+8h],rax
+	mov [rdx],rax
+	mov rdx,uzTipClass
+	mov r9,WS_POPUP or \
+		TTS_ALWAYSTIP or\
+		TTS_BALLOON
+	xor r8,r8
+	xor ecx,ecx
+	call [CreateWindowExW]
+	mov rsp,rbp
+	pop rbp
+	ret 0
+
+.addtool:
+	mov edx,TTM_ADDTOOLW
+	jmp apiw.sms
+
+	;---.update:
+	;---	mov edx,TTM_UPDATE
+	;---	jmp apiw.sms
+
+.popup:
+	mov edx,TTM_POPUP
+	jmp apiw.sms
+
+.add:
+	;--- in RCX hTip
+	;--- in RDX parent container of the tool
+	;--- in R8 hTool
+	;--- in R9 text
+	push rbp
+	push rbx
+	push rdi
+
+	mov rbx,rcx
+	mov rbp,rsp
+
+	mov ecx,\
+		sizeof.TOOLINFO
+	xor eax,eax
+	sub rsp,rcx
+	mov r11,rcx
+	mov rdi,rsp
+	shr ecx,3
+	rep stosq
+
+	mov [rsp+\
+		TOOLINFO.cbSize],r11d
+	mov [rsp+\
+		TOOLINFO.hwnd],rdx ;--- parent container of the tool
+	mov [rsp+\
+		TOOLINFO.uFlags],\
+			TTF_IDISHWND or \
+			TTF_SUBCLASS
+	mov [rsp+\
+		TOOLINFO.uId],r8 	;--- tool
+	mov [rsp+\
+		TOOLINFO.lpszText],r9
+
+	xor r8,r8
+	mov r9,rsp
+	mov rcx,rbx
+	call .addtool
+
+	mov rsp,rbp
+	pop rdi
+	pop rbx
+	pop rbp
+	ret 0
+
+
+   ;ü------------------------------------------ö
+   ;|   TOOL  BAR                              |
+   ;#------------------------------------------ä
+tlb:
+.get_but:
+	;--- in R9 toolbutton
+	;--- in R8 idx
+	mov edx,TB_GETBUTTON
+	jmp apiw.sms
+
+
+.set_iml:
+	mov edx,\
+		TB_SETIMAGELIST
+	jmp apiw.sms
+
+.ins_but:
+	;--- in RAX iButton
+  ;--- in RDX iBitmap
+	;--- in R8 idCommand
+	;--- in R9H	fsState
+	;--- in R9L fsStyle
+	;--- in R10 dwData
+	;--- in R11 iString
+	sub rsp,\
+		sizeof.TBBUTTON
+	mov [rsp+\
+		TBBUTTON.idCommand],r8d
+	mov [rsp+\
+		TBBUTTON.iBitmap],edx
+	mov [rsp+\
+		TBBUTTON.fsStyle],r9l
+	shr r9,8
+	mov [rsp+\
+		TBBUTTON.fsState],r9l
+	mov [rsp+\
+		TBBUTTON.dwData],r10
+	mov [rsp+\
+		TBBUTTON.iString],r11
+
+	mov r8,rax
+	mov edx,\
+		TB_INSERTBUTTONW
+	mov r9,rsp
+	call apiw.sms
+	add rsp,\
+		sizeof.TBBUTTON
+	ret 0
+
+
+;---.addbmp:
+;---	;--- in R8 nButtons 
+;---	;--- in R9 hInst from TBADDBITMAP
+;---	;--- in R10 id from TBADDBITMAP
+;---	sub rsp,\
+;---		sizeof.TBADDBITMAP
+;---	mov [rsp+\
+;---		TBADDBITMAP.hInst],r9
+;---	mov [rsp+\
+;---		TBADDBITMAP.nID],r10d
+;---	mov edx,\
+;---		TB_ADDBITMAP
+;---	mov r9,rsp
+;---	call apiw.sms
+;---	add rsp,\
+;---		sizeof.TBADDBITMAP
+;---	ret 0
+
    ;ü------------------------------------------ö
    ;|   STATUSBAR                              |
    ;#------------------------------------------ä
@@ -611,6 +816,7 @@ lvw:
 .get_item:
 	;--- in R9 TVITEM
 	;--- in RCX hLvw
+	xor r8,r8
 	mov edx,LVM_GETITEMW
 	jmp	apiw.sms
 
@@ -760,6 +966,11 @@ cbex:
 	mov edx,CB_GETCURSEL
 	jmp	apiw.sms
 
+.get_edit:
+	xor r9,r9
+	xor r8,r8
+	mov rdx,CBEM_GETEDITCONTROL
+	jmp	apiw.sms
 
 .get_param:
 	;--- in RCX hCbx
@@ -811,9 +1022,11 @@ cbex:
 	;--- in R11 selimage
 	sub rsp,\
 		sizeof.COMBOBOXEXITEMW
+
 	mov [rsp+\
 		COMBOBOXEXITEMW.pszText],rdx
 	mov rax,r10
+
 	mov edx,CBEIF_TEXT or \
 		CBEIF_INDENT
 	and r10,0Fh
@@ -848,8 +1061,10 @@ cbex:
 @@:	
 	or [rsp+\
 		COMBOBOXEXITEMW.iItem],-1
+
 	mov [rsp+\
 		COMBOBOXEXITEMW.mask],edx
+
 	xor r8,r8
 	mov r9,rsp
 	mov rdx,\

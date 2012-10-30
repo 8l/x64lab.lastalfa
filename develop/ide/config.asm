@@ -380,37 +380,38 @@ config:
 	sub rsp,\
 		FILE_BUFLEN*2
 
+	xor r13,r13
 	mov rdi,[pConf]
 
-	mov eax,\
-		CFG_DEF_LCID
-	mov [.conf.lcid],ax
+;---	mov eax,\
+;---		CFG_DEF_LCID
+;---	mov [.conf.lcid],ax
 
-	mov rsi,\
-		uzDefLang
-	mov ecx,\
-		uzDefLang.size
-	mov rdx,rdi
-	lea rdi,[.conf.lang16]
-	mov r8,rdi
-	rep movsb
+;---	mov rsi,\
+;---		uzDefLang
+;---	mov ecx,\
+;---		uzDefLang.size
+;---	mov rdx,rdi
+;---	lea rdi,[.conf.lang16]
+;---	mov r8,rdi
+;---	rep movsb
 
-	xchg rcx,r8
-	xchg rdi,rdx
-	call .def_lang
-	mov r13,rax
+;---	xchg rcx,r8
+;---	xchg rdi,rdx
+;---	call .def_lang
+;---	mov r13,rax
 
 	mov rax,CFG_POS
 	mov [.conf.pos],rax
 
-	mov rsi,\
-		szDefLang
-	mov ecx,\
-		szDefLang.size
-	mov rdx,rdi
-	lea rdi,[.conf.lang8]
-	rep movsb
-	xchg rdx,rdi
+;---	mov rsi,\
+;---		szDefLang
+;---	mov ecx,\
+;---		szDefLang.size
+;---	mov rdx,rdi
+;---	lea rdi,[.conf.lang8]
+;---	rep movsb
+;---	xchg rdx,rdi
 
 	mov [.conf.fshow],\
 		CFG_FSHOW
@@ -433,8 +434,8 @@ config:
 	mov [.conf.docs.bkcol],\
 		CFG_DOCS_BKCOL
 
-	mov [.conf.mpurp.bkcol],\
-		CFG_MPURP_BKCOL
+	mov [.conf.devt.bkcol],\
+		CFG_DEVT_BKCOL
 
 	;-------------------------
 	mov [.conf.cons.pos],\
@@ -487,7 +488,7 @@ config:
 	mov rcx,rsp
 	call [top64.parse]
 	test rax,rax
-	jz	.openL
+	jz	.openE
 
 	mov rbx,rax
 	mov rsi,rax
@@ -588,42 +589,28 @@ config:
 	jz	.openB
 
 	cmp [r8+\
-		TITEM.len],7
+		TITEM.len],15
 	ja	.openB
 
 	lea rcx,[r8+\
 		TITEM.value]
 
-	mov r10,szDefLang
-	mov eax,[r10]
-	cmp eax,[rcx]
-	jnz	.open_langA
-	movzx eax,word[r10+4]
-	cmp ax,word[rcx+4]
-	jz	.openB
-
-	;--- TODO: exaustive check on user language
-	;--- file exist/try load it ---------------
-
-.open_langA:
-	push rcx	;--- save utf8 value
-	lea rdx,[.conf.lang16]
+	lea rdx,\
+		[.conf.lang16]
+	push rcx	;--- save utf8 string
+	push rdx
 	call utf8.to16
 
-	mov rcx,lang_bridge
-	call bridge.detach
-
-	xor r13,r13
-	lea rcx,[.conf.lang16]
+	pop rcx
 	call .def_lang
+
 	pop rcx
 	test rax,rax
 	jz	.openB
+
 	mov r13,rax
-	
 	lea rdx,[.conf.lang8]
 	call utf8.copyz
-
 	jmp	.openB
 
 .open_wsp:
@@ -664,15 +651,46 @@ config:
 	mov rcx,rbx
 	call [top64.free]
 
-.openL:
-	xor eax,eax
+	;--- check lang.dll
 	test r13,r13
-	jz .openE
+	jnz	.openF1
+
+	mov eax,\
+		CFG_DEF_LCID
+	mov [.conf.lcid],ax
+
+	mov rsi,\
+		uzDefLang
+	mov ecx,\
+		uzDefLang.size
+	mov rdx,rdi
+	lea rdi,[.conf.lang16]
+	mov r8,rdi
+	rep movsb
+
+	xchg rcx,r8
+	xchg rdi,rdx
+	call .def_lang
+	test rax,rax
+	jz	.openE
+
+	mov r13,rax
+	mov rsi,\
+		szDefLang
+	mov ecx,\
+		szDefLang.size
+	mov rdx,rdi
+	lea rdi,[.conf.lang8]
+	rep movsb
+	xchg rdx,rdi
+
+.openF1:
 	call [lang.info_uz]
 	mov [.conf.lcid],r10w
 
 	@nearest 16,eax			;<--- ave size 16 aligned
-	add eax,sizeof.OMNI
+	add eax,\
+		sizeof.OMNI
 	@nearest 16,eax			
 	shl eax,2
 	mul ecx
@@ -683,11 +701,12 @@ config:
 	test rax,rax
 	jnz .openE
 
+	xor r13,r13
 	mov rcx,lang_bridge
 	call bridge.detach
-	xor eax,eax
 	
 .openE:
+	mov rax,r13
 	mov rsp,rbp
 	pop r13
 	pop r12
