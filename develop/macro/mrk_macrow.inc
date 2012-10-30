@@ -51,7 +51,7 @@ macro @rect2reg argreg,argrect {
 	psrld xmm1,17
 	pand xmm0,xmm1
 	packssdw xmm0,xmm0
-	movq argrect,xmm0
+	movq argreg,xmm0
 	;---	movdqu xmm0,dqword[argrect]
 	;---	packusdw xmm0,xmm0
 	;---	movq argreg,xmm0
